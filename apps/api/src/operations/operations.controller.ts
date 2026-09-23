@@ -1,12 +1,24 @@
 import { loadApiEnvironment } from '@ai-service-broker/config';
 import {
+  acceptanceRequestV1Schema,
   closedActionRequestV1Schema,
   confirmRequirementsRequestV1Schema,
+  followUpRequestV1Schema,
+  negotiationRequestV1Schema,
+  providerDeliveryRequestV1Schema,
+  sandboxQuoteRequestV1Schema,
   extractRequirementsRequestV1Schema,
   outboundDeliveryRequestV1Schema,
+  deliveryCallbackRequestV1Schema,
   recordRiskRequestV1Schema,
+  type AcceptanceRequestV1,
   type ClosedActionRequestV1,
   type ConfirmRequirementsRequestV1,
+  type FollowUpRequestV1,
+  type NegotiationRequestV1,
+  type ProviderDeliveryRequestV1,
+  type SandboxQuoteRequestV1,
+  type DeliveryCallbackRequestV1,
   type ExtractRequirementsRequestV1,
   type OutboundDeliveryRequestV1,
   type RecordRiskRequestV1,
@@ -97,28 +109,112 @@ export class OperationsController {
     return this.operations.deliver(body);
   }
 
-  @Post('v1/quotes')
-  quote(
-    @Body(new ZodValidationPipe(closedActionRequestV1Schema))
-    body: ClosedActionRequestV1,
+  @Post('v1/delivery-callbacks')
+  async callback(
+    @Body(new ZodValidationPipe(deliveryCallbackRequestV1Schema))
+    body: DeliveryCallbackRequestV1,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    return this.operations.quote(body.actorId);
+    const result = await this.operations.callback(body);
+    response.status(
+      result.disposition === 'CREATED' ? HttpStatus.CREATED : HttpStatus.OK,
+    );
+    return result;
+  }
+
+  @Post('v1/quotes')
+  async quote(
+    @Body(new ZodValidationPipe(sandboxQuoteRequestV1Schema))
+    body: SandboxQuoteRequestV1,
+    @Headers('idempotency-key') idempotencyKey: string | undefined,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.operations.quote({
+      body,
+      idempotencyKey,
+      correlationId: this.correlation(request),
+    });
+    if ('disposition' in result && result.disposition === 'CREATED') {
+      response.status(HttpStatus.CREATED);
+    }
+    return result;
   }
 
   @Post('v1/negotiations')
-  negotiate(
-    @Body(new ZodValidationPipe(closedActionRequestV1Schema))
-    body: ClosedActionRequestV1,
+  async negotiate(
+    @Body(new ZodValidationPipe(negotiationRequestV1Schema))
+    body: NegotiationRequestV1,
+    @Headers('idempotency-key') idempotencyKey: string | undefined,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    return this.operations.negotiate(body.actorId);
+    const result = await this.operations.negotiate({
+      body,
+      idempotencyKey,
+      correlationId: this.correlation(request),
+    });
+    if ('disposition' in result && result.disposition === 'CREATED') {
+      response.status(HttpStatus.CREATED);
+    }
+    return result;
   }
 
   @Post('v1/follow-ups')
-  followUp(
-    @Body(new ZodValidationPipe(closedActionRequestV1Schema))
-    body: ClosedActionRequestV1,
+  async followUp(
+    @Body(new ZodValidationPipe(followUpRequestV1Schema))
+    body: FollowUpRequestV1,
+    @Headers('idempotency-key') idempotencyKey: string | undefined,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    return this.operations.followUp(body.actorId);
+    const result = await this.operations.followUp({
+      body,
+      idempotencyKey,
+      correlationId: this.correlation(request),
+    });
+    if ('disposition' in result && result.disposition === 'CREATED') {
+      response.status(HttpStatus.CREATED);
+    }
+    return result;
+  }
+
+  @Post('v1/leads/:leadId/acceptance')
+  async accept(
+    @Param('leadId') leadId: string,
+    @Body(new ZodValidationPipe(acceptanceRequestV1Schema))
+    body: AcceptanceRequestV1,
+    @Headers('idempotency-key') idempotencyKey: string | undefined,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.operations.accept({
+      leadId,
+      body,
+      idempotencyKey,
+      correlationId: this.correlation(request),
+    });
+    response.status(
+      result.disposition === 'CREATED' ? HttpStatus.CREATED : HttpStatus.OK,
+    );
+    return result;
+  }
+
+  @Post('v1/outbound/provider-deliveries')
+  async provider(
+    @Body(new ZodValidationPipe(providerDeliveryRequestV1Schema))
+    body: ProviderDeliveryRequestV1,
+    @Headers('idempotency-key') idempotencyKey: string | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.operations.providerDelivery({
+      body,
+      idempotencyKey,
+    });
+    response.status(
+      result.disposition === 'CREATED' ? HttpStatus.CREATED : HttpStatus.OK,
+    );
+    return result;
   }
 
   @Get('v1/policy/facts')
@@ -131,6 +227,26 @@ export class OperationsController {
     return this.operations.maskedLead(leadId);
   }
 
+  @Get('v1/leads/:leadId/requirements/view')
+  requirements(@Param('leadId') leadId: string) {
+    return this.operations.requirementView(leadId);
+  }
+
+  @Get('v1/leads/:leadId/conversations/view')
+  conversations(@Param('leadId') leadId: string) {
+    return this.operations.conversationView(leadId);
+  }
+
+  @Get('v1/leads/:leadId/quotes/view')
+  quotes(@Param('leadId') leadId: string) {
+    return this.operations.quoteView(leadId);
+  }
+
+  @Get('v1/leads/:leadId/audit')
+  audit(@Param('leadId') leadId: string) {
+    return this.operations.auditView(leadId);
+  }
+
   @Get('v1/reviews/queue')
   queue() {
     return this.operations.reviewQueue();
@@ -139,6 +255,11 @@ export class OperationsController {
   @Get('v1/funnel')
   funnel() {
     return this.operations.stages();
+  }
+
+  @Get('v1/operations/summary')
+  summary() {
+    return this.operations.summary();
   }
 
   @Post('v1/webhooks/inbound')

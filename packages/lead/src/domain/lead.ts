@@ -2,6 +2,7 @@ import {
   decideWorkflowMove,
   type ClosedLostReason,
   type LeadStatus,
+  type WorkflowEvidence,
   type WorkflowTarget,
 } from './workflow-move';
 
@@ -131,15 +132,16 @@ export class Lead {
   applyWorkflowMove(
     target: WorkflowTarget,
     reasonCode: ClosedLostReason | null,
-    requirementsReady = false,
+    evidence: boolean | WorkflowEvidence = false,
   ): Lead {
+    const flags = typeof evidence === 'boolean' ? { requirementsReady: evidence } : evidence;
     const decision = decideWorkflowMove({
       from: this.state.status,
       to: target,
       previousStatus: this.state.previousStatus ?? null,
       resumeStatus: this.state.resumeStatus ?? null,
       reasonCode,
-      requirementsReady,
+      ...flags,
     });
     if (!decision.ok) {
       throw new LeadInvariantError('INVALID_LEAD_TRANSITION');

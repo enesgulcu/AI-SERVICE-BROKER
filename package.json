@@ -18,7 +18,8 @@
     "test:e2e": "pnpm -r --if-present test:e2e",
     "test:coverage": "pnpm -r --if-present test:coverage",
     "typecheck": "pnpm -r --if-present typecheck",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build",
+    "scan:secrets": "node scripts/scan-secrets.mjs",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build && pnpm scan:secrets",
     "db:migrate": "pnpm --filter @ai-service-broker/postgres migrate"
   },
   "devDependencies": {

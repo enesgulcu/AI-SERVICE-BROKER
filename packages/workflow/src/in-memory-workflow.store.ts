@@ -8,6 +8,7 @@ import {
 } from '@ai-service-broker/lead';
 import {
   isWorkflowSource,
+  committedEvidence,
   workflowAudit,
   workflowEvent,
   type WorkflowAudit,
@@ -35,6 +36,18 @@ export class InMemoryWorkflowStore implements WorkflowStore {
 
   findLead(id: string) {
     return this.leads.findById(id);
+  }
+
+  auditsForLead(leadId: string) {
+    return Promise.resolve(
+      this.audits
+        .filter((audit) => audit.entityId === leadId)
+        .map((audit) => ({
+          action: audit.action,
+          reasonCode: audit.reasonCode,
+          occurredAt: audit.occurredAt,
+        })),
+    );
   }
 
   commit(write: WorkflowWrite): Promise<WorkflowCommit> {
@@ -73,7 +86,7 @@ export class InMemoryWorkflowStore implements WorkflowStore {
       previousStatus: lead.previousStatus ?? null,
       resumeStatus: lead.resumeStatus ?? null,
       reasonCode: write.reasonCode,
-      requirementsReady: write.requirementsReady,
+      ...committedEvidence(write),
     });
     if (!decision.ok) {
       return { disposition: 'REJECTED', code: decision.code, gate: decision.gate };
@@ -82,7 +95,7 @@ export class InMemoryWorkflowStore implements WorkflowStore {
     const moved = Lead.rehydrate(lead).applyWorkflowMove(
       write.toStatus,
       write.reasonCode,
-      write.requirementsReady,
+      committedEvidence(write),
     );
     try {
       await this.leads.save(moved.snapshot());

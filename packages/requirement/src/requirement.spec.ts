@@ -1,3 +1,4 @@
+import { activeRequirementSchemas } from './catalogue';
 import { assessRequirements, fakeExtract } from './requirement';
 
 const human = (name: string, value: string) => ({
@@ -38,6 +39,19 @@ describe('home-helper requirements', () => {
     expect(
       assessRequirements({
         fields: [{ name: 'days_per_week', value: '5', confidence: 0.9, source: 'HUMAN' }],
+        specialRequirements: [],
+      }).ok,
+    ).toBe(false);
+  });
+
+  it('activates only the home-helper schema', () => {
+    expect(activeRequirementSchemas().map((schema) => schema.category)).toEqual([
+      'REGULAR_HOME_HELPER',
+    ]);
+    expect(
+      assessRequirements({
+        schemaVersion: 'childcare-v1',
+        fields: [human('days_per_week', '5')],
         specialRequirements: [],
       }).ok,
     ).toBe(false);

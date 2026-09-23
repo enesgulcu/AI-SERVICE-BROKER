@@ -30,8 +30,10 @@ Every change must pass:
 6. Production build
 7. Dependency and secret scanning
 
-Later phases add database integration, migration, architecture-boundary,
-conversation regression, adversarial, load and recovery tests.
+CI also runs the Postgres 16 integration test, the secret scan, and
+`pnpm audit --prod --audit-level high`. Architecture-boundary, conversation
+regression, and adversarial tests run inside `pnpm check`. A production soak
+and a backup restore are not claimed.
 
 ## Review triggers
 
@@ -54,7 +56,8 @@ Mandatory specialist/human review applies to:
   stops automated outbound delivery and the outbox drain, and blocks a return
   to `AI_ACTIVE`. `PERSONAL_DATA_MODE=synthetic` blocks real lead sources.
   `WEBHOOK_SECRET` empty rejects every inbound webhook. No flag turns on
-  WhatsApp, an approved price, or a contract. Rollback is to set
+  live WhatsApp, an approved company tariff, or a legal contract. The sandbox
+  quote and the sandbox WhatsApp record do not open either. Rollback is to set
   `AUTOMATION_PAUSED=true` and leave personal data in synthetic mode.
 - Define measurable success, guardrail and rollback thresholds before pilots.
 - Record release version, config/policy versions and verification evidence.

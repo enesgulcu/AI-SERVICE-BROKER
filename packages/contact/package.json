@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@ai-service-broker/lead": "workspace:*",
-    "@ai-service-broker/messaging": "workspace:*"
+    "@ai-service-broker/messaging": "workspace:*",
+    "@ai-service-broker/safety": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

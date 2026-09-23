@@ -35,6 +35,7 @@ export class LeadIngestionController {
       body,
       idempotencyKey,
       correlationId,
+      pilotApprovalId: request.header('x-pilot-approval'),
     });
 
     response.status(

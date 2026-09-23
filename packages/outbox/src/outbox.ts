@@ -101,6 +101,7 @@ export async function drainOutbox(
   store: OutboxStore,
   clock: Clock,
   options: DrainOptions,
+  handoff?: (message: OutboxMessage) => void,
 ): Promise<DrainResult> {
   if (options.automationPaused) {
     return { disposition: 'PAUSED', published: 0, retried: 0, dead: 0 };
@@ -113,6 +114,7 @@ export async function drainOutbox(
     const outcome = decide(message);
     if (outcome.decision === 'ACK') {
       await store.markPublished(message.eventId, clock.now());
+      handoff?.(message);
       result.published += 1;
       continue;
     }

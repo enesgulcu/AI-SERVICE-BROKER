@@ -8,6 +8,9 @@ penalties stay closed by OD-007. A score never creates `BLOCKED` by itself.
 | Unapproved lead source                                        | Refuses first contact with `SOURCE_NOT_APPROVED`           | Legal source authority, OD-013               |
 | Missing automation disclosure, human path, or no-promise line | Rejects the draft                                          | Approved language, OD-003 and OD-015         |
 | Price, refund, compensation, hiring, or guarantee language    | Rejects the draft                                          | Approved commercial wording                  |
+| Legal admission or an employment/contract claim               | Rejects the draft                                          | Approved legal role, OD-003                  |
+| Numeric company claim                                         | Rejects the draft; the empty policy has no fact            | Company-fact approval, OD-008                |
+| Abusive language or health/identity content in a draft        | Rejects the draft and leaves the lead unblocked            | Human escalation, OD-007 and OD-016          |
 | Customer listing text or name copied into the draft           | Rejected because the draft must match the sandbox template | Prompt-injection regression set              |
 | Review expires before a decision                              | Records expiry, sends nothing, returns the lead to `NEW`   | Staffing and SLA, OD-019                     |
 | Human rejects the draft                                       | Sends nothing and records the actor and reason             | Appeal/retry policy                          |

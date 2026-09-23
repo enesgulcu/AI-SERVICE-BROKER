@@ -28,6 +28,7 @@ export interface NewRequirement {
 
 export interface RequirementStore {
   findByKey(idempotencyKey: string): Promise<StoredRequirement | null>;
+  latestForLead(leadId: string): Promise<StoredRequirement | null>;
   save(input: NewRequirement): Promise<StoredRequirement>;
 }
 
@@ -37,6 +38,19 @@ export class InMemoryRequirementStore implements RequirementStore {
 
   findByKey(idempotencyKey: string): Promise<StoredRequirement | null> {
     return Promise.resolve(this.byKey.get(idempotencyKey) ?? null);
+  }
+
+  latestForLead(leadId: string): Promise<StoredRequirement | null> {
+    let latest: StoredRequirement | null = null;
+    for (const item of this.byKey.values()) {
+      if (item.leadId !== leadId) {
+        continue;
+      }
+      if (!latest || item.snapshot.version > latest.snapshot.version) {
+        latest = item;
+      }
+    }
+    return Promise.resolve(latest);
   }
 
   save(input: NewRequirement): Promise<StoredRequirement> {

@@ -15,5 +15,7 @@ export {
   asRequirementStore,
   asRiskStore,
 } from './operations/postgres-operations.store';
+export { PostgresDeliveryCallbackStore } from './messaging/postgres-delivery-callback.store';
+export { PostgresCommercialStore } from './commercial/postgres-commercial.store';
 export { runMigrations } from './migration-runner';
 export type { MigrationResult } from './migration-runner';

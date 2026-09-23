@@ -1,9 +1,11 @@
-export const REQUIREMENT_SCHEMA_VERSION = 'regular-home-helper-v1';
+import {
+  HOME_HELPER_SCHEMA_VERSION,
+  requirementSchema,
+  valueMatches,
+  type RequirementSchemaDefinition,
+} from './catalogue';
 
-const REQUIRED = ['days_per_week', 'working_hours', 'start_date'] as const;
-const SPECIAL = new Set(['LIVE_IN', 'CHILDCARE', 'COOKING']);
-const HOURS = /^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$/;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
+export const REQUIREMENT_SCHEMA_VERSION = HOME_HELPER_SCHEMA_VERSION;
 
 export type FieldSource = 'HUMAN' | 'FAKE_MODEL';
 export type SpecialRequirement = 'LIVE_IN' | 'CHILDCARE' | 'COOKING';
@@ -27,17 +29,25 @@ export interface RequirementSnapshot {
 }
 
 export function assessRequirements(input: {
+  schemaVersion?: string;
   fields: RequirementField[];
   specialRequirements: string[];
 }):
   | { ok: true; snapshot: Omit<RequirementSnapshot, 'version'> }
   | { ok: false; code: 'INVALID_REQUIREMENT' } {
+  const schema = requirementSchema(input.schemaVersion ?? REQUIREMENT_SCHEMA_VERSION);
+  if (!schema || schema.schemaVersion !== REQUIREMENT_SCHEMA_VERSION) {
+    return { ok: false, code: 'INVALID_REQUIREMENT' };
+  }
+
   const confirmed: Record<string, string> = {};
   const contradictions = new Set<string>();
   let evidenceCount = 0;
+  const known = new Map(schema.fields.map((field) => [field.name, field]));
 
   for (const field of input.fields) {
-    if (!isKnown(field.name) || !validValue(field.name, field.value)) {
+    const definition = known.get(field.name);
+    if (!definition || !valueMatches(definition.kind, field.value)) {
       return { ok: false, code: 'INVALID_REQUIREMENT' };
     }
     if (field.confidence < 0 || field.confidence > 1) {
@@ -59,9 +69,10 @@ export function assessRequirements(input: {
     confirmed[field.name] = field.value;
   }
 
+  const allowedSpecial = new Set(schema.specialRequirements);
   const specialRequirements: SpecialRequirement[] = [];
   for (const code of input.specialRequirements) {
-    if (!SPECIAL.has(code)) {
+    if (!allowedSpecial.has(code)) {
       return { ok: false, code: 'INVALID_REQUIREMENT' };
     }
     if (!specialRequirements.includes(code as SpecialRequirement)) {
@@ -69,7 +80,7 @@ export function assessRequirements(input: {
     }
   }
 
-  const missingFields = REQUIRED.filter((name) => !confirmed[name]);
+  const missingFields = requiredNames(schema).filter((name) => !confirmed[name]);
   return {
     ok: true,
     snapshot: {
@@ -77,7 +88,7 @@ export function assessRequirements(input: {
       confirmed,
       evidenceCount,
       specialRequirements,
-      missingFields: [...missingFields],
+      missingFields,
       contradictions: [...contradictions],
       ready: missingFields.length === 0 && contradictions.size === 0,
     },
@@ -104,26 +115,6 @@ export function fakeExtract(input: { text?: string; fields: RequirementField[] }
   return { fields, rejected };
 }
 
-function isKnown(name: string): boolean {
-  return (
-    REQUIRED.includes(name as (typeof REQUIRED)[number]) ||
-    name === 'language_requirement' ||
-    name === 'tasks'
-  );
-}
-
-function validValue(name: string, value: string): boolean {
-  if (name === 'days_per_week') {
-    return /^[1-7]$/.test(value);
-  }
-  if (name === 'working_hours') {
-    return HOURS.test(value);
-  }
-  if (name === 'start_date') {
-    return DATE.test(value);
-  }
-  if (name === 'language_requirement' || name === 'tasks') {
-    return /^[a-z_]{1,40}$/.test(value);
-  }
-  return false;
+function requiredNames(schema: RequirementSchemaDefinition): string[] {
+  return schema.fields.filter((field) => field.required).map((field) => field.name);
 }

@@ -33,16 +33,28 @@ export {
 } from './v1/workflow.contract';
 export type { AdvanceWorkflowRequestV1, AdvanceWorkflowResponseV1 } from './v1/workflow.contract';
 export {
+  acceptanceRequestV1Schema,
   closedActionRequestV1Schema,
   confirmRequirementsRequestV1Schema,
+  followUpRequestV1Schema,
+  negotiationRequestV1Schema,
+  providerDeliveryRequestV1Schema,
+  sandboxQuoteRequestV1Schema,
   extractRequirementsRequestV1Schema,
+  deliveryCallbackRequestV1Schema,
   outboundDeliveryRequestV1Schema,
   recordRiskRequestV1Schema,
 } from './v1/operations.contract';
 export type {
+  AcceptanceRequestV1,
   ClosedActionRequestV1,
   ConfirmRequirementsRequestV1,
+  FollowUpRequestV1,
+  NegotiationRequestV1,
+  ProviderDeliveryRequestV1,
+  SandboxQuoteRequestV1,
   ExtractRequirementsRequestV1,
+  DeliveryCallbackRequestV1,
   OutboundDeliveryRequestV1,
   RecordRiskRequestV1,
 } from './v1/operations.contract';

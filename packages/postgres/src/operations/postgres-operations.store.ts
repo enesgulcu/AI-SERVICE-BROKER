@@ -93,6 +93,28 @@ export class PostgresOperationsStore implements LeadDirectory, OutboxRedrive {
     }
   }
 
+  async latestRequirement(leadId: string): Promise<StoredRequirement | null> {
+    const client = await this.pool.connect();
+    try {
+      const found = await client.query<RequirementRow>(
+        `
+          SELECT
+            id, lead_id, version, schema_version, fields, special_requirements,
+            missing_fields, contradictions, evidence_count, ready, idempotency_key,
+            request_fingerprint
+          FROM requirement.versions
+          WHERE lead_id = $1
+          ORDER BY version DESC
+          LIMIT 1
+        `,
+        [leadId],
+      );
+      return found.rows[0] ? toRequirement(found.rows[0]) : null;
+    } finally {
+      client.release();
+    }
+  }
+
   async saveRequirement(input: NewRequirement): Promise<StoredRequirement> {
     const client = await this.pool.connect();
     let open = false;
@@ -287,6 +309,18 @@ export class PostgresOperationsStore implements LeadDirectory, OutboxRedrive {
             disposition: 'REVIEW',
           }
         : null;
+    } finally {
+      client.release();
+    }
+  }
+
+  async countRisks(): Promise<number> {
+    const client = await this.pool.connect();
+    try {
+      const found = await client.query<{ count: number } & Record<string, unknown>>(
+        `SELECT count(*)::int AS count FROM safety.risk_signals`,
+      );
+      return Number(found.rows[0]?.count ?? 0);
     } finally {
       client.release();
     }
@@ -506,6 +540,7 @@ function toSummary(row: SummaryRow): LeadSummary {
 export function asRequirementStore(store: PostgresOperationsStore): RequirementStore {
   return {
     findByKey: (idempotencyKey) => store.findRequirement(idempotencyKey),
+    latestForLead: (leadId) => store.latestRequirement(leadId),
     save: (input) => store.saveRequirement(input),
   };
 }
@@ -513,6 +548,7 @@ export function asRequirementStore(store: PostgresOperationsStore): RequirementS
 export function asRiskStore(store: PostgresOperationsStore): RiskStore {
   return {
     findByKey: (idempotencyKey) => store.findRisk(idempotencyKey),
+    count: () => store.countRisks(),
     save: (input) => store.saveRisk(input),
   };
 }

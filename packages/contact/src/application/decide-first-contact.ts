@@ -1,7 +1,7 @@
 import { IdempotencyConflictError, Lead, LeadVersionConflictError } from '@ai-service-broker/lead';
 import { assessOutbound } from '@ai-service-broker/messaging';
 import { isApprovedContactSource } from '../domain/eligibility';
-import { guardFirstContactDraft } from '../domain/first-contact-draft';
+import { firstContactGuardReasons } from '../domain/first-contact-draft';
 import {
   ContactFlowError,
   type AuditRecord,
@@ -93,7 +93,7 @@ export class DecideFirstContact {
       if (!isApprovedContactSource(lead.source)) {
         throw new ContactFlowError('CONTACT_NOT_ELIGIBLE', ['SOURCE_NOT_APPROVED']);
       }
-      const reasons = guardFirstContactDraft(review.draft);
+      const reasons = firstContactGuardReasons(review.draft);
       if (reasons.length > 0) {
         throw new ContactFlowError('MESSAGE_GUARD_REJECTED', reasons);
       }
@@ -103,6 +103,7 @@ export class DecideFirstContact {
         controlMode: 'AI_ACTIVE',
         automationPaused: command.automationPaused === true,
         templateApproved: true,
+        templateVersion: review.templateVersion,
       });
       if (!delivery.ok) {
         throw new ContactFlowError('MESSAGE_GUARD_REJECTED', [delivery.code]);

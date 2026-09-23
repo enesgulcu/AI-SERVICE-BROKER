@@ -81,6 +81,14 @@ export type InboundCommit =
 
 export interface InboundStore {
   commit(write: InboundWrite): Promise<InboundCommit>;
+  summariesForLead(leadId: string): Promise<ConversationLeadSummary[]>;
+}
+
+export interface ConversationLeadSummary {
+  conversationId: string;
+  channel: 'MOCK';
+  controlMode: ControlMode;
+  messageCount: number;
 }
 
 export class InboundFlowError extends Error {

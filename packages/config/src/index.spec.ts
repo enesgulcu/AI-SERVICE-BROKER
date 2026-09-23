@@ -14,7 +14,11 @@ describe('environment configuration', () => {
       LEAD_PERSISTENCE: 'memory',
       LOG_LEVEL: 'info',
       NODE_ENV: 'local',
+      OPERATOR_AUTH: 'disabled',
+      OPERATOR_ROLE: 'operator',
+      OPERATOR_TOKEN: '',
       PERSONAL_DATA_MODE: 'synthetic',
+      PILOT_APPROVAL_ID: '',
       WEBHOOK_SECRET: '',
     });
   });

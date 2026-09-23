@@ -1,4 +1,7 @@
-export const FIRST_CONTACT_TEMPLATE_VERSION = 'sandbox-first-contact-v1';
+import { APPROVED_TEMPLATE_VERSION } from '@ai-service-broker/messaging';
+import { guardCustomerDraft } from '@ai-service-broker/safety';
+
+export const FIRST_CONTACT_TEMPLATE_VERSION = APPROVED_TEMPLATE_VERSION;
 
 export const SANDBOX_FIRST_CONTACT_DRAFT = [
   'Merhaba, bu mesaj otomatik bir taslaktır ve bir insan onayından sonra iletilir.',
@@ -33,4 +36,8 @@ export function guardFirstContactDraft(draft: string): DraftGuardReason[] {
     reasons.push('PROMISE_LANGUAGE');
   }
   return reasons;
+}
+
+export function firstContactGuardReasons(draft: string): string[] {
+  return [...guardFirstContactDraft(draft), ...guardCustomerDraft(draft).reasons];
 }

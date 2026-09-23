@@ -18,6 +18,10 @@ import {
   type LeadIngestionPort,
 } from '@ai-service-broker/lead';
 import {
+  InMemoryDeliveryCallbackStore,
+  type DeliveryCallbackStore,
+} from '@ai-service-broker/messaging';
+import {
   UnavailableOutboxRedrive,
   type OutboxRedrive,
 } from '@ai-service-broker/outbox';
@@ -25,7 +29,12 @@ import {
   InMemoryRequirementStore,
   type RequirementStore,
 } from '@ai-service-broker/requirement';
-import { InMemoryRiskStore, type RiskStore } from '@ai-service-broker/safety';
+import {
+  InMemoryCommercialStore,
+  InMemoryRiskStore,
+  type CommercialStore,
+  type RiskStore,
+} from '@ai-service-broker/safety';
 import {
   InMemoryWorkflowStore,
   type WorkflowStore,
@@ -37,6 +46,8 @@ import {
   PostgresInboundStore,
   PostgresLeadIngestionAdapter,
   PostgresOperationsStore,
+  PostgresCommercialStore,
+  PostgresDeliveryCallbackStore,
   PostgresWorkflowStore,
   asRequirementStore,
   asRiskStore,
@@ -64,6 +75,8 @@ export class LeadPersistence implements OnModuleDestroy, ReadinessProbe {
   readonly requirements: RequirementStore;
   readonly risks: RiskStore;
   readonly redrive: OutboxRedrive;
+  readonly callbacks: DeliveryCallbackStore;
+  readonly commercial: CommercialStore;
   private readonly pool?: SqlPool;
 
   constructor() {
@@ -87,6 +100,8 @@ export class LeadPersistence implements OnModuleDestroy, ReadinessProbe {
       this.requirements = asRequirementStore(operations);
       this.risks = asRiskStore(operations);
       this.redrive = operations;
+      this.callbacks = new PostgresDeliveryCallbackStore(this.pool);
+      this.commercial = new PostgresCommercialStore(this.pool);
       return;
     }
 
@@ -101,6 +116,8 @@ export class LeadPersistence implements OnModuleDestroy, ReadinessProbe {
     this.requirements = new InMemoryRequirementStore();
     this.risks = new InMemoryRiskStore();
     this.redrive = new UnavailableOutboxRedrive();
+    this.callbacks = new InMemoryDeliveryCallbackStore();
+    this.commercial = new InMemoryCommercialStore();
   }
 
   async checkDatabase(): Promise<DatabaseCheck> {

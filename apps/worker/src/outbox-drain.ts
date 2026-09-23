@@ -2,6 +2,7 @@ import {
   loadDatabaseEnvironment,
   loadWorkerEnvironment,
 } from '@ai-service-broker/config';
+import { handoffPublishedEvent } from '@ai-service-broker/messaging';
 import {
   drainOutbox,
   InMemoryOutboxStore,
@@ -67,6 +68,15 @@ export class OutboxDrain implements OnModuleInit, OnModuleDestroy {
           automationPaused: this.environment.AUTOMATION_PAUSED,
           batchSize: this.environment.OUTBOX_BATCH_SIZE,
           maxAttempts: this.environment.OUTBOX_MAX_ATTEMPTS,
+        },
+        (message) => {
+          const handed = handoffPublishedEvent(
+            message.eventType,
+            message.payload['channel'],
+          );
+          if (!('provider' in handed)) {
+            this.logger.warn({ code: handed.code });
+          }
         },
       );
       if (

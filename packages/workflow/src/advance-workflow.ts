@@ -5,6 +5,7 @@ import {
   type ClosedLostReason,
   type LeadSnapshot,
   type LeadStatus,
+  type WorkflowEvidence,
   type WorkflowTarget,
 } from '@ai-service-broker/lead';
 
@@ -42,6 +43,22 @@ export interface WorkflowWrite {
   correlationId: string;
   occurredAt: Date;
   requirementsReady: boolean;
+  quoteReady?: boolean;
+  quoteSent?: boolean;
+  negotiating?: boolean;
+  acceptanceReady?: boolean;
+  jobReady?: boolean;
+}
+
+export function committedEvidence(write: WorkflowWrite): WorkflowEvidence {
+  return {
+    requirementsReady: write.requirementsReady,
+    quoteReady: write.quoteReady === true,
+    quoteSent: write.quoteSent === true,
+    negotiating: write.negotiating === true,
+    acceptanceReady: write.acceptanceReady === true,
+    jobReady: write.jobReady === true,
+  };
 }
 
 export interface WorkflowEvent {
@@ -91,6 +108,13 @@ export type WorkflowCommit =
 export interface WorkflowStore {
   findLead(id: string): Promise<LeadSnapshot | null>;
   commit(write: WorkflowWrite): Promise<WorkflowCommit>;
+  auditsForLead(leadId: string): Promise<WorkflowAuditView[]>;
+}
+
+export interface WorkflowAuditView {
+  action: WorkflowAudit['action'];
+  reasonCode: string;
+  occurredAt: Date;
 }
 
 export class WorkflowFlowError extends Error {
@@ -134,7 +158,7 @@ export class AdvanceWorkflow {
 
   async execute(
     command: AdvanceWorkflowCommand,
-    options?: { requirementsReady?: boolean },
+    options?: WorkflowEvidence,
   ): Promise<AdvanceWorkflowResult> {
     if (
       !UUID.test(command.leadId) ||
@@ -161,6 +185,11 @@ export class AdvanceWorkflow {
       correlationId: command.correlationId,
       occurredAt: this.clock.now(),
       requirementsReady: options?.requirementsReady === true,
+      quoteReady: options?.quoteReady === true,
+      quoteSent: options?.quoteSent === true,
+      negotiating: options?.negotiating === true,
+      acceptanceReady: options?.acceptanceReady === true,
+      jobReady: options?.jobReady === true,
     });
 
     if (committed.disposition === 'NOT_FOUND') {
@@ -193,7 +222,7 @@ export class AdvanceWorkflow {
 
 export function workflowEvent(lead: LeadSnapshot, write: WorkflowWrite): WorkflowEvent {
   const moved = Lead.rehydrate(lead)
-    .applyWorkflowMove(write.toStatus, write.reasonCode, write.requirementsReady)
+    .applyWorkflowMove(write.toStatus, write.reasonCode, committedEvidence(write))
     .snapshot();
   return {
     eventId: write.eventId,
@@ -231,7 +260,7 @@ export function decideReason(lead: LeadSnapshot, write: WorkflowWrite): ClosedLo
     previousStatus: lead.previousStatus ?? null,
     resumeStatus: lead.resumeStatus ?? null,
     reasonCode: write.reasonCode,
-    requirementsReady: write.requirementsReady,
+    ...committedEvidence(write),
   });
   return decision.ok ? decision.reasonCode : 'NONE';
 }

@@ -7,6 +7,7 @@ import {
   type InboundEvent,
   type InboundStore,
   type InboundWrite,
+  type ConversationLeadSummary,
   type StoredInbound,
 } from './accept-inbound';
 import {
@@ -87,6 +88,30 @@ export class InMemoryInboundStore implements InboundStore, ConversationControlSt
       this.audits.push(inboundAudit({ ...write, messageId: stored.messageId }));
       return Promise.resolve({ disposition: 'RECORDED', stored });
     });
+  }
+
+  summariesForLead(leadId: string): Promise<ConversationLeadSummary[]> {
+    const counts = new Map<string, ConversationLeadSummary>();
+    for (const message of this.messages.values()) {
+      if (message.leadId !== leadId) {
+        continue;
+      }
+      const current = counts.get(message.conversationId);
+      if (current) {
+        current.messageCount += 1;
+        continue;
+      }
+      const conversation = [...this.conversations.values()].find(
+        (item) => item.id === message.conversationId,
+      );
+      counts.set(message.conversationId, {
+        conversationId: message.conversationId,
+        channel: 'MOCK',
+        controlMode: conversation?.controlMode ?? message.controlMode,
+        messageCount: 1,
+      });
+    }
+    return Promise.resolve([...counts.values()]);
   }
 
   commitControl(write: ControlWrite): Promise<ControlCommit> {

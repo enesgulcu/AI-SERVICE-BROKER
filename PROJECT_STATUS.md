@@ -1,28 +1,26 @@
 # Project Status
 
-Last updated: 2026-09-23  
-Current phase: Safe path complete through qualification  
-Overall status: In progress — 42 of 58 roadmap items
+Last updated: 2026-09-24  
+Current phase: Synthetic sandbox path complete  
+Overall status: Checklist complete — 59 of 59 roadmap items
 
 ## Snapshot
 
-A synthetic lead can move from intake to a qualified home-helper requirement.
-The customer-facing product is earlier than the checklist: there is no approved
-price, no WhatsApp delivery, no admin login, and no real personal data.
+A synthetic lead can move from intake to an operational `JOB_READY` snapshot.
+The snapshot is not a contract. The sandbox quote is a one-minor-unit fixture,
+not a company tariff. Live WhatsApp is not called.
 
-| Area       | Now                                                                                                                                             |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Phases 0–2 | Done, except the requirement-ID traceability matrix and container-backed database tests                                                         |
-| Phase 3    | Done, except a real outbound provider                                                                                                           |
-| Phase 4    | Home-helper schema, evidence, versions, and the fake extractor are in place. A dynamic schema catalogue is not                                  |
-| Phases 5–8 | Only the closed doors: empty policy, review-only risk, price function with no card, mock delivery, rate limit, masked reads, and rollback flags |
+| Area       | Now                                                                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Phases 0–8 | Checklist complete. Production switches for a real tariff, live WhatsApp, a legal contract, an identity provider, and real personal data stay off. |
 
-Checklist: 42 of 58. Verification on 2026-09-23: `pnpm check` (100 unit tests, 20 API end-to-end tests) and migrations `0001`–`0006` on hosted Postgres.
+Checklist: 59 of 59. Verification on 2026-09-24: `pnpm check` (114 unit tests, including the Postgres integration test, and 23 API end-to-end tests) plus `pnpm audit --prod --audit-level high`. Migrations `0001`–`0008` are on hosted Postgres. CI runs the integration test against a Postgres 16 service container.
 
 ## Current objective
 
-A synthetic lead can be qualified against the home-helper requirement schema.
-Price, WhatsApp, real personal data, acceptance, and job creation stay closed.
+Keep the synthetic path auditable. Do not treat the sandbox quote, the job
+snapshot, or the WhatsApp sandbox adapter as a production commercial or legal
+commitment.
 
 ## Completed
 
@@ -73,7 +71,7 @@ Price, WhatsApp, real personal data, acceptance, and job creation stay closed.
   unverified customer and one mock conversation for the same phone, and rejects
   a changed provider message. The event and audit omit the phone and body. No
   reply is sent. `AUTOMATION_PAUSED` stores the conversation as `PAUSED`.
-- Schema migrations `0001`–`0006` applied to the hosted Neon Postgres database.
+- Schema migrations `0001`–`0008` applied to the hosted Neon Postgres database.
   The connection string stays in the gitignored `.env`. API, worker, and
   migration commands load that file when it exists.
 - `POST /v1/conversations/{id}/control` sets `HUMAN_CONTROL` or `PAUSED`.
@@ -85,44 +83,69 @@ Price, WhatsApp, real personal data, acceptance, and job creation stay closed.
   confirmation is a fact; fake-model output below confidence 1 is evidence.
   `QUALIFIED` is reached only by requirement confirmation. The public workflow
   command cannot set it. Events omit the field values.
+- The requirement catalogue is configuration. Only `REGULAR_HOME_HELPER` is
+  active. Any other schema version is rejected.
+- Requirement IDs `REQ-001` through `REQ-031` are traced to an authority and,
+  when implemented, to code and a test. See `docs/TRACEABILITY.md`.
 - Policy `policy-empty-v1` exposes no company fact. Risk signals stay in
-  review and do not block a lead. The price function is deterministic, and the
-  API loads no rate card, so quotes are not issued. Negotiation and follow-up
-  have no authority.
+  review and do not block a lead. The price function is deterministic. A
+  request without a lead issues no quote. The synthetic sandbox card is a
+  fixture, not an approved tariff. A positive discount has no authority.
+- Customer-visible drafts pass `guardCustomerDraft` before a mock first
+  contact is prepared or approved. Promise, legal-commitment, unapproved
+  company-fact, and sensitive or abusive language reject the draft. The lead
+  is not blocked.
+- Delivery callbacks accept only the approved mock template
+  `sandbox-first-contact-v1`. A repeated provider event is a duplicate. A
+  changed status conflicts. WhatsApp callbacks are refused and nothing is sent.
+- Operator reads for requirement, conversation, quote, and audit omit phone,
+  message body, listing text, and requirement field values.
+- A synthetic qualified lead can take the sandbox path: fixture quote,
+  zero-discount negotiation, unsent mock follow-up, WhatsApp sandbox record
+  with `network: false`, and an operational `JOB_READY` snapshot. See ADR-0016.
+- Token RBAC exists and defaults to off. A non-synthetic source is accepted
+  only when personal-data mode is `approved` and the pilot approval matches.
+- Adversarial draft cases, an in-process guard repeat, and risk idempotency
+  are covered. `GET /v1/operations/summary` returns funnel, qualified count,
+  review counts, and `COST_NOT_AVAILABLE`.
 - Outbound delivery accepts a human-approved mock template and refuses
-  WhatsApp. Unsigned webhooks are rejected. POST requests are rate limited.
-  Safe dead letters can be redriven and audited.
+  live WhatsApp. Unsigned webhooks are rejected. POST requests are rate limited.
+  Safe dead letters can be redriven and audited. Published events hand off to
+  the mock provider.
 - Operator lead and review-queue reads mask the phone and omit listing text.
-  There is no admin login.
 
 ## In progress
 
-- Container-backed Redis verification
+- None. The roadmap checklist is complete.
 
 ## Next
 
-1. Verify Compose and Redis after Docker is available.
-2. Add a separate inbox consumer only if inbound receipt and processing must
-   split across processes.
-3. Add a real outbound provider only after the messaging decision is approved.
-4. Issue a quote only after an approved rate card exists.
+Production use of a real tariff, live WhatsApp, a legal contract, an identity
+provider, or real personal data waits on the open decisions in
+`OPEN_DECISIONS.md`. Local Docker Compose and Redis are still unverified on
+this machine.
 
 ## Current blockers
 
-Docker is not installed on the current machine, so local Redis and
-container-backed integration tests cannot yet be verified. The hosted Postgres
-schema is applied. Real-data ingestion, production messaging, pricing and
-autonomous outreach remain blocked by decisions in `OPEN_DECISIONS.md`.
-The highest-priority approvals are source/contact legality, KVKK and
-cross-border processing, and WhatsApp opt-in/template operation.
+Docker is not installed on the current machine, so Compose and live Redis were
+not started here. The Postgres integration test passed on hosted Postgres and
+is wired to a Postgres 16 service in CI. Real tariff, live messaging, legal
+acceptance, and real personal data remain open decisions. The highest-priority
+approvals are source/contact legality, KVKK and cross-border processing, and
+WhatsApp opt-in/template operation.
 
 ## Verification
 
-Verified on 2026-09-23:
+Verified on 2026-09-24:
 
-- `pnpm check`: passed (format, lint, type-check, 100 unit tests, 20 API
-  end-to-end tests and production builds)
-- `pnpm audit --prod --audit-level high`: passed with no known vulnerabilities
-- Node.js `v22.15.0`, pnpm `11.5.3`
-- `pnpm db:migrate` applied `0001` through `0006` to Neon
+- `pnpm check`: passed (format, lint, type-check, 114 unit tests including
+  the Postgres integration test, 23 API end-to-end tests, production builds,
+  and the tracked-file secret scan)
+- Postgres commercial integration test: passed against hosted Postgres on
+  2026-09-23
+- Node.js on this machine is v24.14.0. Project engines require Node.js 22 or
+  newer. pnpm `11.5.3`
+- Migrations `0001` through `0008` are applied on hosted Postgres
 - Docker Compose and live Redis were not verified on this machine
+- Production go-live gates in `QUALITY_GATES.md` and
+  `docs/legal/COMPLIANCE_CHECKLIST.md` remain unchecked

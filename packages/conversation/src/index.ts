@@ -9,6 +9,7 @@ export type {
   AcceptInboundCommand,
   AcceptInboundResult,
   ControlMode,
+  ConversationLeadSummary,
   InboundAudit,
   InboundCommit,
   InboundEvent,

@@ -8,6 +8,7 @@ import {
   isSyntheticLeadSource,
   loadApiEnvironment,
 } from '@ai-service-broker/config';
+import { assessPersonalDataPilot } from '@ai-service-broker/safety';
 import {
   IdempotencyConflictError,
   IngestLead,
@@ -21,6 +22,7 @@ export interface IngestLeadHttpCommand {
   body: IngestLeadRequestV1;
   idempotencyKey: string | undefined;
   correlationId: string;
+  pilotApprovalId?: string;
 }
 
 @Injectable()
@@ -39,14 +41,19 @@ export class LeadIngestionService {
       });
     }
 
-    if (
-      environment.PERSONAL_DATA_MODE === 'synthetic' &&
-      !isSyntheticLeadSource(command.body.source)
-    ) {
+    const pilot = assessPersonalDataPilot({
+      mode: environment.PERSONAL_DATA_MODE,
+      synthetic: isSyntheticLeadSource(command.body.source),
+      approvalId: command.pilotApprovalId,
+      expectedApprovalId: environment.PILOT_APPROVAL_ID,
+    });
+    if (!pilot.ok) {
       throw new ApiError(HttpStatus.FORBIDDEN, {
-        code: 'REAL_DATA_INGESTION_BLOCKED',
+        code: pilot.code,
         message:
-          'Only synthetic or test leads are accepted until personal-data processing is approved.',
+          pilot.code === 'PILOT_APPROVAL_REQUIRED'
+            ? 'A matching pilot approval is required.'
+            : 'Only synthetic or test leads are accepted until personal-data processing is approved.',
       });
     }
 

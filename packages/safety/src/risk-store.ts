@@ -22,6 +22,7 @@ export interface NewRisk {
 
 export interface RiskStore {
   findByKey(idempotencyKey: string): Promise<StoredRisk | null>;
+  count(): Promise<number>;
   save(input: NewRisk): Promise<StoredRisk>;
 }
 
@@ -30,6 +31,10 @@ export class InMemoryRiskStore implements RiskStore {
 
   findByKey(idempotencyKey: string): Promise<StoredRisk | null> {
     return Promise.resolve(this.byKey.get(idempotencyKey) ?? null);
+  }
+
+  count(): Promise<number> {
+    return Promise.resolve(this.byKey.size);
   }
 
   save(input: NewRisk): Promise<StoredRisk> {

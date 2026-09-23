@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ai-service-broker/config": "workspace:*",
+    "@ai-service-broker/messaging": "workspace:*",
     "@ai-service-broker/outbox": "workspace:*",
     "@ai-service-broker/postgres": "workspace:*",
     "@nestjs/common": "catalog:",

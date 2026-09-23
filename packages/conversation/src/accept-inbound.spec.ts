@@ -49,6 +49,16 @@ describe('AcceptInboundMessage', () => {
     const evidence = JSON.stringify({ events: store.events, audits: store.audits });
     expect(evidence).not.toContain('+905551112233');
     expect(evidence).not.toContain('gizli mesaj');
+    const summaries = await store.summariesForLead(leadId);
+    expect(summaries).toEqual([
+      {
+        conversationId: recorded.conversationId,
+        channel: 'MOCK',
+        controlMode: 'AI_ACTIVE',
+        messageCount: 1,
+      },
+    ]);
+    expect(JSON.stringify(summaries)).not.toContain('gizli mesaj');
   });
 
   it('pauses the conversation and still stores the message when automation is paused', async () => {

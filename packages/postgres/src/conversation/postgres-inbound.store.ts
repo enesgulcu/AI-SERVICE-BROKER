@@ -2,10 +2,18 @@ import type {
   InboundCommit,
   InboundStore,
   InboundWrite,
+  ConversationLeadSummary,
   StoredInbound,
 } from '@ai-service-broker/conversation';
 import { inboundAudit, inboundEvent } from '@ai-service-broker/conversation';
 import type { SqlPool } from '../database';
+
+interface SummaryRow extends Record<string, unknown> {
+  conversation_id: string;
+  channel: string;
+  control_mode: ConversationLeadSummary['controlMode'];
+  message_count: number;
+}
 
 interface MessageRow extends Record<string, unknown> {
   id: string;
@@ -207,6 +215,37 @@ export class PostgresInboundStore implements InboundStore {
         await client.query('ROLLBACK');
       }
       throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async summariesForLead(leadId: string): Promise<ConversationLeadSummary[]> {
+    const client = await this.pool.connect();
+    try {
+      const found = await client.query<SummaryRow>(
+        `
+          SELECT
+            c.id AS conversation_id,
+            c.channel,
+            c.control_mode,
+            count(m.id)::int AS message_count
+          FROM conversation.messages m
+          JOIN conversation.conversations c ON c.id = m.conversation_id
+          WHERE m.lead_id = $1
+          GROUP BY c.id, c.channel, c.control_mode
+          ORDER BY c.id
+        `,
+        [leadId],
+      );
+      return found.rows
+        .filter((row) => row.channel === 'MOCK')
+        .map((row) => ({
+          conversationId: row.conversation_id,
+          channel: 'MOCK',
+          controlMode: row.control_mode,
+          messageCount: Number(row.message_count),
+        }));
     } finally {
       client.release();
     }

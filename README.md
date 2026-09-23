@@ -5,9 +5,10 @@ leads into safe, structured and commercially viable `JOB_READY` records.
 
 ## Current state
 
-The safe path is in place: a synthetic lead can be qualified, and price,
-WhatsApp, admin login, and real personal data stay closed. The roadmap
-checklist is 42 of 58. See `PROJECT_STATUS.md` and `ROADMAP.md`.
+The synthetic sandbox path is in place: a synthetic lead can reach an
+operational `JOB_READY` snapshot. Live WhatsApp, a company tariff, a legal
+contract, and real personal data stay switched off. The roadmap checklist is
+59 of 59. See `PROJECT_STATUS.md` and `ROADMAP.md`.
 
 ## Prerequisites
 
@@ -65,8 +66,8 @@ curl -X POST http://localhost:3000/v1/conversations/<conversationId>/control \
   -d '{"actorId":"operator-1","controlMode":"HUMAN_CONTROL","expectedVersion":1}'
 ```
 
-A human can record a later workflow state. Quote, acceptance, and job states
-stay closed, and this does not send a message:
+A human can record a later workflow state. The public command cannot issue a
+quote, record acceptance, or mark a job ready, and it does not send a message:
 
 ```bash
 curl -X POST http://localhost:3000/v1/leads/<leadId>/workflow-transitions \
@@ -76,8 +77,10 @@ curl -X POST http://localhost:3000/v1/leads/<leadId>/workflow-transitions \
 ```
 
 A confirmed home-helper requirement can move an interested synthetic lead to
-`QUALIFIED`. The public workflow command cannot do that by itself. Quotes,
-negotiation, follow-up, company facts, and WhatsApp stay closed:
+`QUALIFIED`. The public workflow command cannot do that by itself. A quote
+request without a lead stays closed. A synthetic qualified lead can receive
+the non-binding sandbox fixture, and live WhatsApp and company facts stay
+closed:
 
 ```bash
 curl -X POST http://localhost:3000/v1/quotes \
@@ -116,6 +119,7 @@ pnpm --filter @ai-service-broker/worker dev
 - `OPEN_DECISIONS.md`: decisions requiring approval
 - `QUALITY_GATES.md`: definition of ready/done and release gates
 - `PROJECT_STATUS.md`: current work and verification evidence
+- `docs/TRACEABILITY.md`: requirement IDs mapped to authority, code, and tests
 - `docs/adr/`: durable architecture decisions
 - `packages/contracts`: versioned external/event schemas
 - `packages/lead`: framework-independent lead domain and application logic

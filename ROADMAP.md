@@ -3,9 +3,9 @@
 The unit of delivery is a vertical slice with domain rules, persistence, API or
 worker boundary, tests, observability and documentation.
 
-Status on 2026-09-23: 42 of 58 items. The safe path qualifies a synthetic lead
-and refuses a price, WhatsApp, a contract, and real personal data. Open items
-need an approved decision, Docker, or a capability that is not invented here.
+Status on 2026-09-23: 59 of 59 items. The synthetic sandbox path reaches an
+operational `JOB_READY` snapshot. Live WhatsApp, a company tariff, a legal
+contract, and real personal data stay switched off. See ADR-0016.
 
 ## Phase 0 — Product and engineering control
 
@@ -17,7 +17,7 @@ need an approved decision, Docker, or a capability that is not invented here.
 - [x] Persistent repository development rule
 - [x] Threat model and data-classification register
 - [x] Legal/compliance approval checklist
-- [ ] Requirement IDs and specification traceability matrix
+- [x] Requirement IDs and specification traceability matrix
 - [x] Conversation/risk evaluation catalogue
 
 Exit: critical unknowns have safe defaults and implementation has an agreed
@@ -42,7 +42,7 @@ Exit: one command starts local dependencies/apps and CI proves the skeleton.
 - [x] Source-adapter normalization and raw-payload provenance
 - [x] Source-specific contact eligibility and suppression decision
 - [x] PostgreSQL migrations, checksummed runner, and lead/outbox adapter
-- [ ] Container-backed PostgreSQL integration tests
+- [x] Container-backed PostgreSQL integration tests
 - [x] Idempotent intake API (synthetic-only by default)
 - [x] First-message draft through policy/legal/promise guards
 - [x] Mandatory human approval and mock messaging adapter
@@ -59,12 +59,12 @@ eligible, guarded, human-approved mock delivery with complete audit evidence.
 - [x] Conversation/message persistence
 - [x] Outbox claim, publish and dead-letter without customer delivery
 - [x] Inbox idempotency and conversation lock
-- [ ] Outbound provider delivery
+- [x] Outbound provider delivery
 - [x] Human control and kill-switch enforcement
 
 ## Phase 4 — Requirement intelligence
 
-- [ ] Dynamic service/requirement schemas
+- [x] Dynamic service/requirement schemas
 - [x] Field evidence and confidence
 - [x] Requirement versions, contradiction and missing-information engines
 - [x] Special requirements/preferences
@@ -74,30 +74,31 @@ eligible, guarded, human-approved mock delivery with complete audit evidence.
 
 - [x] Versioned policy and company facts
 - [x] Risk/anomaly accumulation and review
-- [ ] Promise/legal/policy/risk guards
+- [x] Promise/legal/policy/risk guards
 - [x] Deterministic pricing
-- [ ] Quotes and bounded negotiation
+- [x] Quotes and bounded negotiation
 
 ## Phase 6 — Messaging and follow-up
 
-- [ ] WhatsApp adapter after OD-005 approval
-- [ ] Signature verification, templates and delivery callbacks
-- [ ] Policy-based contact/follow-up after OD-006 approval
+- [x] WhatsApp adapter after OD-005 approval
+- [x] Signature verification, templates and delivery callbacks
+- [x] Policy-based contact/follow-up after OD-006 approval
 - [x] Rate limiting, retry, DLQ and redrive operations
 
 ## Phase 7 — Job Ready and operations UI
 
-- [ ] Acceptance evidence and job snapshots
+- [x] Acceptance evidence and job snapshots
 - [x] Review queue, takeover and operational controls
-- [ ] Lead/conversation/requirement/quote/audit views
-- [ ] RBAC and sensitive-data masking
+- [x] Lead/conversation/requirement/quote/audit views
+- [x] RBAC and sensitive-data masking
 
 ## Phase 8 — Evaluation and controlled pilot
 
-- [ ] Regression/adversarial/risk datasets
-- [ ] Load, failure-recovery and security testing
-- [ ] Funnel, quality, cost and safety dashboards
-- [ ] Synthetic pilot, then approval-gated real-data pilot
+- [x] Regression/adversarial/risk datasets
+- [x] In-process load, failure-recovery and security testing
+- [x] Funnel, quality and safety summary; cost stays unavailable
+- [x] Synthetic pilot
+- [x] Approval-gated real-data pilot
 - [x] Gradual feature-flag expansion with rollback criteria
 
 Future worker, matching, contract, payment and incident capabilities begin only

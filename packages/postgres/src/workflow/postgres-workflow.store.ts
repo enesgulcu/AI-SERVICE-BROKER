@@ -71,6 +71,12 @@ function toLead(row: LeadRow): LeadSnapshot {
   };
 }
 
+interface AuditRow extends Record<string, unknown> {
+  action: 'WORKFLOW_TRANSITIONED';
+  reason_code: string;
+  occurred_at: Date;
+}
+
 export class PostgresWorkflowStore implements WorkflowStore {
   constructor(private readonly pool: SqlPool) {}
 
@@ -170,6 +176,11 @@ export class PostgresWorkflowStore implements WorkflowStore {
         resumeStatus: lead.resumeStatus ?? null,
         reasonCode: write.reasonCode,
         requirementsReady: write.requirementsReady,
+        quoteReady: write.quoteReady === true,
+        quoteSent: write.quoteSent === true,
+        negotiating: write.negotiating === true,
+        acceptanceReady: write.acceptanceReady === true,
+        jobReady: write.jobReady === true,
       });
       if (!decision.ok) {
         await client.query('ROLLBACK');
@@ -177,7 +188,14 @@ export class PostgresWorkflowStore implements WorkflowStore {
       }
 
       const moved = Lead.rehydrate(lead)
-        .applyWorkflowMove(write.toStatus, write.reasonCode, write.requirementsReady)
+        .applyWorkflowMove(write.toStatus, write.reasonCode, {
+          requirementsReady: write.requirementsReady,
+          quoteReady: write.quoteReady === true,
+          quoteSent: write.quoteSent === true,
+          negotiating: write.negotiating === true,
+          acceptanceReady: write.acceptanceReady === true,
+          jobReady: write.jobReady === true,
+        })
         .snapshot();
       const updated = await client.query(
         `
@@ -277,6 +295,28 @@ export class PostgresWorkflowStore implements WorkflowStore {
         await client.query('ROLLBACK');
       }
       throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async auditsForLead(leadId: string) {
+    const client = await this.pool.connect();
+    try {
+      const found = await client.query<AuditRow>(
+        `
+          SELECT action, reason_code, occurred_at
+          FROM audit.entries
+          WHERE entity_type = 'Lead' AND entity_id = $1
+          ORDER BY occurred_at ASC
+        `,
+        [leadId],
+      );
+      return found.rows.map((row) => ({
+        action: row.action,
+        reasonCode: row.reason_code,
+        occurredAt: row.occurred_at,
+      }));
     } finally {
       client.release();
     }

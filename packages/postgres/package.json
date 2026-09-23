@@ -23,6 +23,7 @@
     "@ai-service-broker/conversation": "workspace:*",
     "@ai-service-broker/workflow": "workspace:*",
     "@ai-service-broker/lead": "workspace:*",
+    "@ai-service-broker/messaging": "workspace:*",
     "@ai-service-broker/requirement": "workspace:*",
     "@ai-service-broker/safety": "workspace:*",
     "pg": "^8.16.3"

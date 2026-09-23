@@ -167,15 +167,27 @@ names, and contradictions. It does not return the field values.
 - `POST /v1/leads/{leadId}/risk-signals` records `REVIEW`. It does not set
   `BLOCKED`. `RiskSignalRecorded` version 1 carries `leadId`, `code`,
   `severity`, and `disposition`.
-- `POST /v1/outbound/deliveries` accepts only a human-approved `MOCK` template.
-  `WHATSAPP` returns `409 UNSAFE_CHANNEL`.
+- `POST /v1/outbound/deliveries` accepts only a human-approved `MOCK` template
+  whose version is `sandbox-first-contact-v1`. `WHATSAPP` returns `409 UNSAFE_CHANNEL`.
+- `POST /v1/delivery-callbacks` records `DELIVERED` or `FAILED` for that same
+  mock template. A repeat is `DUPLICATE`. A changed status is `409
+CALLBACK_CONFLICT`. The callback stores no message body and sends nothing.
 - `POST /v1/webhooks/inbound` requires `x-webhook-timestamp` and
   `x-webhook-signature` over the raw body. A missing or invalid signature is
   `401`. A valid signature is accepted and does not create a lead.
 - `GET /v1/leads/{leadId}/view` returns status, version, source, and a phone
   mask. It does not return the listing text.
+- `GET /v1/leads/{leadId}/requirements/view` returns readiness and counts, not
+  field values.
+- `GET /v1/leads/{leadId}/conversations/view` returns channel, control mode, and
+  message count. It does not return the message body or phone.
+- `GET /v1/leads/{leadId}/quotes/view` returns an empty list.
+- `GET /v1/leads/{leadId}/audit` returns workflow action, reason code, and time.
 - `GET /v1/reviews/queue` lists `MANUAL_REVIEW` leads with the same mask.
 - `GET /v1/funnel` returns status counts only.
+- `GET /v1/operations/summary` returns those counts, the qualified count, manual
+  review count, risk-review count, and `COST_NOT_AVAILABLE`. It includes no
+  phone, message, or price.
 - `POST /v1/outbox/dead-letters/{eventId}/redrive` requeues an unpublished
   safe event and writes an audit row. Unsafe or missing events are refused.
 

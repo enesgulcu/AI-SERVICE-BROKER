@@ -62,9 +62,24 @@ describe('workflow policy v1', () => {
     expect(() => qualifying.applyWorkflowMove('QUALIFIED', null)).toThrow(
       'INVALID_LEAD_TRANSITION',
     );
-    expect(qualifying.applyWorkflowMove('QUALIFIED', null, true).snapshot().status).toBe(
-      'QUALIFIED',
-    );
+    const qualified = qualifying.applyWorkflowMove('QUALIFIED', null, true);
+    expect(qualified.snapshot().status).toBe('QUALIFIED');
+    const job = qualified
+      .applyWorkflowMove('QUOTE_READY', null, { quoteReady: true })
+      .applyWorkflowMove('QUOTE_SENT', null, { quoteSent: true })
+      .applyWorkflowMove('NEGOTIATING', null, { negotiating: true })
+      .applyWorkflowMove('CUSTOMER_ACCEPTED', null, { acceptanceReady: true })
+      .applyWorkflowMove('JOB_READY', null, { jobReady: true });
+    expect(job.snapshot().status).toBe('JOB_READY');
+    expect(
+      decideWorkflowMove({
+        from: 'QUALIFIED',
+        to: 'QUOTE_READY',
+        previousStatus: null,
+        resumeStatus: null,
+        reasonCode: null,
+      }),
+    ).toEqual({ ok: false, code: 'GATE_CLOSED', gate: 'PRICING_NOT_AVAILABLE' });
     expect(
       decideWorkflowMove({
         from: 'NEW',

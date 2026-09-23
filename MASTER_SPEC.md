@@ -117,18 +117,23 @@ Section 4 is the V1 target. It is not a claim that every capability is built.
 
 Built for synthetic data:
 
-- Lead intake, guarded mock first contact, inbox, and conversation control
-- Workflow through `INTERESTED`, then home-helper qualification to `QUALIFIED`
-- Review-only risk signals, masked operator reads, rate limiting, and audited
-  redrive of already-safe dead letters
+- Lead intake through an operational `JOB_READY` snapshot
+- Guarded mock first contact, inbox, and conversation control
+- Home-helper qualification, a non-binding sandbox quote, and zero-discount
+  negotiation
+- An unsent mock follow-up and a WhatsApp sandbox adapter that does not open
+  a network call
+- Operator reads, optional token roles, and an approval gate for non-synthetic
+  sources
 
-Fail-closed until an open decision is approved:
+Still switched off by default:
 
-- Real personal data, WhatsApp, an issued quote, negotiation, follow-up, and
-  company facts
-- Acceptance, `JOB_READY`, and admin login
+- Live WhatsApp, a company tariff, company facts, and a legal contract
+- Real personal data (`PERSONAL_DATA_MODE=synthetic`) and admin identity
+- Token authentication (`OPERATOR_AUTH=disabled`)
 
-Roadmap checklist: 42 of 58. `pnpm check` passed with 100 unit tests and 20 API
-end-to-end tests. Hosted Postgres has migrations `0001` through `0006`. Docker
-and Redis on this machine are still unverified. Detail and the remaining
-blockers are in `PROJECT_STATUS.md` and `ROADMAP.md`.
+Roadmap checklist: 59 of 59. `pnpm check` passed on 2026-09-24 with 114 unit
+tests, including the Postgres integration test, and 23 API end-to-end tests.
+Hosted Postgres has migrations `0001` through `0008`. Docker Compose and Redis
+on this machine are still unverified. Detail is in `PROJECT_STATUS.md` and
+`ROADMAP.md`.

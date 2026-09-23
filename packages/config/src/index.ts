@@ -22,6 +22,10 @@ const apiEnvironmentSchema = baseEnvironmentSchema.extend({
     .default('false')
     .transform((value) => value === 'true'),
   WEBHOOK_SECRET: z.string().default(''),
+  OPERATOR_AUTH: z.enum(['disabled', 'token']).default('disabled'),
+  OPERATOR_TOKEN: z.string().default(''),
+  OPERATOR_ROLE: z.enum(['viewer', 'operator']).default('operator'),
+  PILOT_APPROVAL_ID: z.string().default(''),
 });
 
 const workerEnvironmentSchema = baseEnvironmentSchema.extend({

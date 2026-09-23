@@ -8,7 +8,7 @@ import { evaluateContactEligibility } from '../domain/eligibility';
 import {
   FIRST_CONTACT_TEMPLATE_VERSION,
   SANDBOX_FIRST_CONTACT_DRAFT,
-  guardFirstContactDraft,
+  firstContactGuardReasons,
 } from '../domain/first-contact-draft';
 import {
   FIRST_CONTACT_REVIEW_TTL_MS,
@@ -99,7 +99,7 @@ export class PrepareFirstContact {
       throw new ContactFlowError('CONTACT_NOT_ELIGIBLE', [eligibility.reasonCode]);
     }
 
-    const reasons = guardFirstContactDraft(SANDBOX_FIRST_CONTACT_DRAFT);
+    const reasons = firstContactGuardReasons(SANDBOX_FIRST_CONTACT_DRAFT);
     if (reasons.length > 0) {
       throw new ContactFlowError('MESSAGE_GUARD_REJECTED', reasons);
     }

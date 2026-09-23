@@ -82,6 +82,7 @@ describe('Closed operations (e2e)', () => {
         origin: 'HUMAN',
         controlMode: 'AI_ACTIVE',
         templateApproved: true,
+        templateVersion: 'sandbox-first-contact-v1',
       })
       .expect(409);
     expect(whatsapp.body).toMatchObject({ error: { code: 'UNSAFE_CHANNEL' } });
@@ -100,6 +101,41 @@ describe('Closed operations (e2e)', () => {
     expect(view.body).toMatchObject({ phoneMask: '***55', status: 'NEW' });
     expect(JSON.stringify(view.body)).not.toContain('+905551112255');
     expect(JSON.stringify(view.body)).not.toContain('private listing text');
+  });
+
+  it('records one mock delivery callback and refuses WhatsApp', async () => {
+    const server = app.getHttpServer();
+    const body = {
+      channel: 'MOCK',
+      templateVersion: 'sandbox-first-contact-v1',
+      providerEventId: 'mock-event-e2e-1',
+      status: 'DELIVERED',
+    };
+    const created = await request(server)
+      .post('/v1/delivery-callbacks')
+      .send(body)
+      .expect(201);
+    expect(created.body).toEqual({
+      disposition: 'CREATED',
+      status: 'DELIVERED',
+    });
+    const replay = await request(server)
+      .post('/v1/delivery-callbacks')
+      .send(body)
+      .expect(200);
+    expect(replay.body).toEqual({
+      disposition: 'DUPLICATE',
+      status: 'DELIVERED',
+    });
+    const whatsapp = await request(server)
+      .post('/v1/delivery-callbacks')
+      .send({
+        ...body,
+        channel: 'WHATSAPP',
+        providerEventId: 'mock-event-e2e-2',
+      })
+      .expect(409);
+    expect(whatsapp.body).toMatchObject({ error: { code: 'UNSAFE_CHANNEL' } });
   });
 
   it('qualifies a lead only after confirmed home-helper requirements', async () => {
@@ -197,5 +233,31 @@ describe('Closed operations (e2e)', () => {
       .expect(201);
     expect(risk.body).toMatchObject({ disposition: 'REVIEW' });
     expect(JSON.stringify(risk.body)).not.toContain('BLOCKED');
+
+    const requirement = await request(server)
+      .get(`/v1/leads/${leadId}/requirements/view`)
+      .expect(200);
+    expect(requirement.body).toMatchObject({
+      requirement: {
+        ready: true,
+        schemaVersion: 'regular-home-helper-v1',
+        specialRequirements: ['COOKING'],
+      },
+    });
+    expect(JSON.stringify(requirement.body)).not.toContain('09:00-17:00');
+    const quotes = await request(server)
+      .get(`/v1/leads/${leadId}/quotes/view`)
+      .expect(200);
+    expect(quotes.body).toEqual({ leadId, quotes: [] });
+    const conversations = await request(server)
+      .get(`/v1/leads/${leadId}/conversations/view`)
+      .expect(200);
+    expect(conversations.body).toEqual({ leadId, conversations: [] });
+    const audit = await request(server)
+      .get(`/v1/leads/${leadId}/audit`)
+      .expect(200);
+    expect(JSON.stringify(audit.body)).toContain('WORKFLOW_TRANSITIONED');
+    expect(JSON.stringify(audit.body)).not.toContain('09:00-17:00');
+    expect(JSON.stringify(audit.body)).not.toContain('+905551112255');
   });
 });

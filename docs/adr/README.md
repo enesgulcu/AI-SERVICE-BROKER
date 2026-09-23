@@ -25,4 +25,9 @@ module boundaries, data, security, reliability, deployment or major technology.
 - ADR-0008 synthetic inbound recording
 - ADR-0009 conversation control and kill switch
 - ADR-0010 versioned workflow transitions, requirement sentence superseded by ADR-0011
-- ADR-0011 safe completion boundary
+- ADR-0011 safe completion boundary, synthetic quote and job sentences superseded by ADR-0016
+- ADR-0012 active requirement schema catalogue
+- ADR-0013 customer-draft safety guards
+- ADR-0014 approved template catalogue and mock delivery callbacks
+- ADR-0015 operator read views omit sensitive values
+- ADR-0016 synthetic sandbox completion

@@ -21,6 +21,7 @@ export type { CreateLeadInput, LeadSnapshot, LeadStatus } from './domain/lead';
 export { WORKFLOW_POLICY_VERSION, decideWorkflowMove } from './domain/workflow-move';
 export type {
   ClosedLostReason,
+  WorkflowEvidence,
   WorkflowGate,
   WorkflowMove,
   WorkflowTarget,

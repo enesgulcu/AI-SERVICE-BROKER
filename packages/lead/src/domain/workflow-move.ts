@@ -5,6 +5,11 @@ export type LeadStatus =
   | 'INTERESTED'
   | 'QUALIFYING'
   | 'QUALIFIED'
+  | 'QUOTE_READY'
+  | 'QUOTE_SENT'
+  | 'NEGOTIATING'
+  | 'CUSTOMER_ACCEPTED'
+  | 'JOB_READY'
   | 'NO_RESPONSE'
   | 'MANUAL_REVIEW'
   | 'CLOSED_LOST';
@@ -33,6 +38,15 @@ export type WorkflowTarget =
   | 'JOB_READY'
   | 'BLOCKED';
 
+export interface WorkflowEvidence {
+  requirementsReady?: boolean;
+  quoteReady?: boolean;
+  quoteSent?: boolean;
+  negotiating?: boolean;
+  acceptanceReady?: boolean;
+  jobReady?: boolean;
+}
+
 export type WorkflowMove =
   | {
       ok: true;
@@ -49,11 +63,6 @@ export type WorkflowMove =
 
 const GATES: Readonly<Record<string, WorkflowGate>> = {
   ANALYZED: 'ANALYSIS_NOT_AVAILABLE',
-  QUOTE_READY: 'PRICING_NOT_AVAILABLE',
-  QUOTE_SENT: 'PRICING_NOT_AVAILABLE',
-  NEGOTIATING: 'PRICING_NOT_AVAILABLE',
-  CUSTOMER_ACCEPTED: 'ACCEPTANCE_NOT_AVAILABLE',
-  JOB_READY: 'JOB_NOT_AVAILABLE',
   BLOCKED: 'POLICY_NOT_AVAILABLE',
 };
 
@@ -77,6 +86,11 @@ const ACTIVE = new Set<LeadStatus>([
   'INTERESTED',
   'QUALIFYING',
   'QUALIFIED',
+  'QUOTE_READY',
+  'QUOTE_SENT',
+  'NEGOTIATING',
+  'CUSTOMER_ACCEPTED',
+  'JOB_READY',
 ]);
 
 export function decideWorkflowMove(input: {
@@ -86,6 +100,11 @@ export function decideWorkflowMove(input: {
   resumeStatus: LeadStatus | null;
   reasonCode: ClosedLostReason | null;
   requirementsReady?: boolean;
+  quoteReady?: boolean;
+  quoteSent?: boolean;
+  negotiating?: boolean;
+  acceptanceReady?: boolean;
+  jobReady?: boolean;
 }): WorkflowMove {
   const gate = GATES[input.to];
   if (gate) {
@@ -157,13 +176,45 @@ export function decideWorkflowMove(input: {
     if (input.from !== 'QUALIFYING' || input.requirementsReady !== true) {
       return { ok: false, code: 'GATE_CLOSED', gate: 'REQUIREMENTS_NOT_AVAILABLE' };
     }
-    return {
-      ok: true,
-      status: 'QUALIFIED',
-      previousStatus: null,
-      resumeStatus: null,
-      reasonCode: 'NONE',
-    };
+    return accepted('QUALIFIED');
+  }
+
+  if (input.to === 'QUOTE_READY') {
+    if (input.from === 'QUALIFIED' && input.quoteReady === true) {
+      return accepted('QUOTE_READY');
+    }
+    return { ok: false, code: 'GATE_CLOSED', gate: 'PRICING_NOT_AVAILABLE' };
+  }
+
+  if (input.to === 'QUOTE_SENT') {
+    if (input.from === 'QUOTE_READY' && input.quoteSent === true) {
+      return accepted('QUOTE_SENT');
+    }
+    return { ok: false, code: 'GATE_CLOSED', gate: 'PRICING_NOT_AVAILABLE' };
+  }
+
+  if (input.to === 'NEGOTIATING') {
+    if (input.from === 'QUOTE_SENT' && input.negotiating === true) {
+      return accepted('NEGOTIATING');
+    }
+    return { ok: false, code: 'GATE_CLOSED', gate: 'PRICING_NOT_AVAILABLE' };
+  }
+
+  if (input.to === 'CUSTOMER_ACCEPTED') {
+    if (
+      (input.from === 'QUOTE_SENT' || input.from === 'NEGOTIATING') &&
+      input.acceptanceReady === true
+    ) {
+      return accepted('CUSTOMER_ACCEPTED');
+    }
+    return { ok: false, code: 'GATE_CLOSED', gate: 'ACCEPTANCE_NOT_AVAILABLE' };
+  }
+
+  if (input.to === 'JOB_READY') {
+    if (input.from === 'CUSTOMER_ACCEPTED' && input.jobReady === true) {
+      return accepted('JOB_READY');
+    }
+    return { ok: false, code: 'GATE_CLOSED', gate: 'JOB_NOT_AVAILABLE' };
   }
 
   if (input.to === 'MANUAL_REVIEW') {
@@ -197,4 +248,14 @@ export function decideWorkflowMove(input: {
   }
 
   return { ok: false, code: 'INVALID_TRANSITION' };
+}
+
+function accepted(status: LeadStatus): WorkflowMove {
+  return {
+    ok: true,
+    status,
+    previousStatus: null,
+    resumeStatus: null,
+    reasonCode: 'NONE',
+  };
 }

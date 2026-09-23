@@ -64,7 +64,8 @@ Status: Initial V1 model
 
 - **Job**: accepted requirement and quote snapshots.
 - `JOB_READY` requires customer acceptance, valid snapshots and passed policy
-  gates; it does not imply worker availability.
+  gates; it does not imply worker availability. The synthetic sandbox snapshot
+  is operational and is not a contract.
 
 ### Audit
 
@@ -94,9 +95,10 @@ effective dates have explicit timezone semantics.
 ## Initial service categories
 
 Service categories and required fields are configuration/policy data, not a
-closed code enum. The baseline category is `REGULAR_HOME_HELPER`; activating
-childcare, elderly care, live-in or other categories requires approved schemas,
-pricing and risk policies.
+closed code enum. The requirement catalogue has one active schema,
+`REGULAR_HOME_HELPER` (`regular-home-helper-v1`). An unknown schema version is
+rejected. Activating childcare, elderly care, live-in or other categories
+requires approved schemas, pricing and risk policies.
 
 ## Deferred worker domain
 

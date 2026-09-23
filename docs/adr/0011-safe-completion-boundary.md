@@ -1,6 +1,6 @@
 # ADR-0011: Safe completion boundary
 
-- Status: Accepted
+- Status: Accepted, quote and job sentences superseded for synthetic leads by ADR-0016
 - Date: 2026-09-23
 - Supersedes: the requirement-state sentence of ADR-0010
 
