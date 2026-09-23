@@ -66,6 +66,7 @@ export class LeadIngestionService {
         publishedAt: command.body.publishedAt
           ? new Date(command.body.publishedAt)
           : undefined,
+        rawPayload: command.body.rawData,
       });
 
       return {

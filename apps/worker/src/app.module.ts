@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { OutboxDrain } from './outbox-drain';
 
-@Module({})
+@Module({
+  providers: [OutboxDrain],
+})
 export class AppModule {}

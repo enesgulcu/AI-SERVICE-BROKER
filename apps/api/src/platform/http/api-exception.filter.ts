@@ -8,7 +8,9 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
+import { randomUUID } from 'node:crypto';
 import { isApiErrorBody } from './api-error';
+import { readCorrelationId } from './correlation-id';
 
 interface ErrorDescriptor {
   code: string;
@@ -73,10 +75,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
             message: 'An unexpected error occurred.',
           });
     const path = request.originalUrl.split('?')[0];
-    const correlationId =
-      typeof request.id === 'string' || typeof request.id === 'number'
-        ? String(request.id)
-        : 'unknown';
+    const correlationId = readCorrelationId(request.id) ?? randomUUID();
 
     const logContext = {
       correlationId,

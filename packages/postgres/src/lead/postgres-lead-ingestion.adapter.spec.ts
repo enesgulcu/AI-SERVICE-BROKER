@@ -30,6 +30,10 @@ class ScriptedClient implements SqlClient {
     return Promise.resolve((step.result ?? { rows: [], rowCount: null }) as SqlQueryResult<Row>);
   }
 
+  execute(): Promise<void> {
+    return Promise.reject(new Error('Lead ingestion must use parameterized queries'));
+  }
+
   release(): void {
     this.released = true;
   }
@@ -57,9 +61,11 @@ function transaction(): CreateLeadTransaction {
   return {
     idempotencyKey: 'lead:request-123',
     requestFingerprint: 'a'.repeat(64),
+    rawPayload: { note: 'evidence-only' },
     lead: {
       id: '92d60e65-14f0-4d4f-b9ae-062c8f685213',
       status: 'NEW',
+      version: 1,
       source: 'SAHIBINDEN',
       sourceReference: 'listing-123',
       phone: '+905551112233',
@@ -106,6 +112,10 @@ describe('PostgresLeadIngestionAdapter', () => {
         result: { rows: [{ id: transaction().lead.id }], rowCount: 1 },
       },
       {
+        includes: 'INSERT INTO acquisition.raw_payloads',
+        result: { rows: [], rowCount: 1 },
+      },
+      {
         includes: 'INSERT INTO platform.outbox_events',
         result: { rows: [], rowCount: 1 },
       },
@@ -121,6 +131,7 @@ describe('PostgresLeadIngestionAdapter', () => {
       call.text.includes('INSERT INTO platform.outbox_events'),
     );
     expect(JSON.stringify(outboxCall?.values)).not.toContain(transaction().lead.phone);
+    expect(JSON.stringify(outboxCall?.values)).not.toContain('evidence-only');
     expect(client.released).toBe(true);
     client.assertComplete();
   });
@@ -249,6 +260,10 @@ describe('PostgresLeadIngestionAdapter', () => {
       {
         includes: 'INSERT INTO acquisition.leads',
         result: { rows: [{ id: transaction().lead.id }], rowCount: 1 },
+      },
+      {
+        includes: 'INSERT INTO acquisition.raw_payloads',
+        result: { rows: [], rowCount: 1 },
       },
       {
         includes: 'INSERT INTO platform.outbox_events',

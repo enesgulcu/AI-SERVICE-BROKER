@@ -10,10 +10,12 @@ describe('environment configuration', () => {
     expect(loadApiEnvironment({})).toEqual({
       API_PORT: 3000,
       AUTO_FIRST_CONTACT: false,
+      AUTOMATION_PAUSED: false,
       LEAD_PERSISTENCE: 'memory',
       LOG_LEVEL: 'info',
       NODE_ENV: 'local',
       PERSONAL_DATA_MODE: 'synthetic',
+      WEBHOOK_SECRET: '',
     });
   });
 
@@ -25,8 +27,13 @@ describe('environment configuration', () => {
     expect(() => loadApiEnvironment({ API_PORT: '70000' })).toThrow();
   });
 
-  it('loads a named worker', () => {
-    expect(loadWorkerEnvironment({ WORKER_NAME: 'follow-up' }).WORKER_NAME).toBe('follow-up');
+  it('loads a named worker without draining a database or bypassing the pause switch', () => {
+    expect(loadWorkerEnvironment({ WORKER_NAME: 'follow-up' })).toMatchObject({
+      AUTOMATION_PAUSED: false,
+      OUTBOX_PERSISTENCE: 'memory',
+      WORKER_NAME: 'follow-up',
+    });
+    expect(loadWorkerEnvironment({ AUTOMATION_PAUSED: 'true' }).AUTOMATION_PAUSED).toBe(true);
   });
 
   it('loads PostgreSQL configuration without exposing a default URL', () => {

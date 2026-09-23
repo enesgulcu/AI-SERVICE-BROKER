@@ -1,0 +1,29 @@
+{
+  "name": "@ai-service-broker/architecture",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit --incremental false"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "catalog:",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.4",
+    "typescript": "catalog:"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testEnvironment": "node"
+  }
+}

@@ -7,12 +7,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "dev": "nest start --watch",
+    "dev": "node --env-file-if-exists=../../.env ./node_modules/@nestjs/cli/bin/nest.js start --watch",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start": "node --env-file-if-exists=../../.env ./node_modules/@nestjs/cli/bin/nest.js start",
+    "start:dev": "node --env-file-if-exists=../../.env ./node_modules/@nestjs/cli/bin/nest.js start --watch",
+    "start:debug": "node --env-file-if-exists=../../.env ./node_modules/@nestjs/cli/bin/nest.js start --debug --watch",
+    "start:prod": "node --env-file-if-exists=../../.env dist/main",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "typecheck": "tsc --noEmit --incremental false",
     "test": "jest --runInBand",
@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "@ai-service-broker/config": "workspace:*",
+    "@ai-service-broker/outbox": "workspace:*",
+    "@ai-service-broker/postgres": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "reflect-metadata": "catalog:",
@@ -67,6 +69,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@ai-service-broker/(.*)$": "<rootDir>/../../../packages/$1/src/index.ts"
+    }
   }
 }

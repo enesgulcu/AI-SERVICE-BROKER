@@ -42,7 +42,9 @@ export async function runMigrations(
     const appliedResult = await client.query<AppliedMigrationRow>(
       'SELECT version, checksum FROM platform.schema_migrations ORDER BY version',
     );
-    const appliedChecksums = new Map(appliedResult.rows.map((row) => [row.version, row.checksum]));
+    const appliedChecksums = new Map(
+      appliedResult.rows.map((row) => [row.version, row.checksum.trim()]),
+    );
     const files = (await readdir(migrationsDirectory))
       .filter((file) => MIGRATION_FILE.test(file))
       .sort();
@@ -63,7 +65,7 @@ export async function runMigrations(
 
       await client.query('BEGIN');
       try {
-        await client.query(sql);
+        await client.execute(sql);
         await client.query(
           'INSERT INTO platform.schema_migrations (version, checksum) VALUES ($1, $2)',
           [file, migrationChecksum],

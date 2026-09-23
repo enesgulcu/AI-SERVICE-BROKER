@@ -76,10 +76,11 @@ export class PostgresLeadIngestionAdapter implements LeadIngestionPort {
             listing_text,
             published_at,
             received_at,
-            raw_payload_reference
+            raw_payload_reference,
+            version
           )
           VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
           )
           ON CONFLICT (source, source_reference) DO NOTHING
           RETURNING id
@@ -98,6 +99,7 @@ export class PostgresLeadIngestionAdapter implements LeadIngestionPort {
           transaction.lead.publishedAt ?? null,
           transaction.lead.receivedAt,
           transaction.lead.rawPayloadReference ?? null,
+          transaction.lead.version,
         ],
       );
 
@@ -107,6 +109,14 @@ export class PostgresLeadIngestionAdapter implements LeadIngestionPort {
         transactionOpen = false;
         return duplicateResult;
       }
+
+      await client.query(
+        `
+          INSERT INTO acquisition.raw_payloads (id, lead_id, payload)
+          VALUES ($1, $2, $3::jsonb)
+        `,
+        [transaction.lead.id, transaction.lead.id, JSON.stringify(transaction.rawPayload)],
+      );
 
       await client.query(
         `

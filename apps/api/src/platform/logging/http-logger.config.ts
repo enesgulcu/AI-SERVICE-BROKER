@@ -2,9 +2,9 @@ import type { ApiEnvironment } from '@ai-service-broker/config';
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Options } from 'pino-http';
+import { SAFE_CORRELATION_ID } from '../http/correlation-id';
 
 const CORRELATION_ID_HEADER = 'x-correlation-id';
-const SAFE_CORRELATION_ID = /^[a-zA-Z0-9._:-]{1,128}$/;
 
 function getCorrelationId(request: IncomingMessage): string {
   const header = request.headers[CORRELATION_ID_HEADER];

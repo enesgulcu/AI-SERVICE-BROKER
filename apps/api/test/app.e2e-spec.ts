@@ -45,6 +45,7 @@ describe('API foundation (e2e)', () => {
       status: 'ok',
       checks: {
         configuration: 'ok',
+        database: 'skipped',
       },
     });
     expect(typeof (body as { timestamp?: unknown }).timestamp).toBe('string');
@@ -58,6 +59,19 @@ describe('API foundation (e2e)', () => {
       .expect(200);
 
     expect(response.headers['x-correlation-id'] as unknown).toBe(correlationId);
+  });
+
+  it('replaces a correlation ID that is too short for lead processing', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/health/live')
+      .set('x-correlation-id', 'short')
+      .expect(200);
+
+    const correlationHeader = response.headers['x-correlation-id'] as unknown;
+    expect(correlationHeader).not.toBe('short');
+    expect(correlationHeader).toEqual(
+      expect.stringMatching(/^[a-zA-Z0-9._:-]{8,128}$/),
+    );
   });
 
   it('replaces an unsafe inbound correlation ID', async () => {

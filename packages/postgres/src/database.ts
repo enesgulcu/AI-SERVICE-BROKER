@@ -10,6 +10,7 @@ export interface SqlClient {
     text: string,
     values?: readonly unknown[],
   ): Promise<SqlQueryResult<Row>>;
+  execute(text: string): Promise<void>;
   release(): void;
 }
 
@@ -32,6 +33,10 @@ class NodePostgresClient implements SqlClient {
     };
   }
 
+  async execute(text: string): Promise<void> {
+    await this.client.query(text);
+  }
+
   release(): void {
     this.client.release();
   }
@@ -40,8 +45,17 @@ class NodePostgresClient implements SqlClient {
 class NodePostgresPool implements SqlPool {
   private readonly pool: Pool;
 
-  constructor(config: PoolConfig) {
+  constructor(config: PoolConfig, onIdleError?: (error: unknown) => void) {
     this.pool = new Pool(config);
+    this.pool.on('error', (error: unknown) => {
+      if (onIdleError) {
+        onIdleError(error);
+        return;
+      }
+
+      const message = error instanceof Error ? error.message : 'Unknown database error';
+      console.error('PostgreSQL idle client error', { message });
+    });
   }
 
   async connect(): Promise<SqlClient> {
@@ -58,13 +72,17 @@ export interface CreatePostgresPoolOptions {
   ssl: 'disable' | 'require';
   applicationName: string;
   max?: number;
+  onIdleError?: (error: unknown) => void;
 }
 
 export function createPostgresPool(options: CreatePostgresPoolOptions): SqlPool {
-  return new NodePostgresPool({
-    application_name: options.applicationName,
-    connectionString: options.connectionString,
-    max: options.max ?? 10,
-    ssl: options.ssl === 'require' ? { rejectUnauthorized: true } : false,
-  });
+  return new NodePostgresPool(
+    {
+      application_name: options.applicationName,
+      connectionString: options.connectionString,
+      max: options.max ?? 10,
+      ssl: options.ssl === 'require' ? { rejectUnauthorized: true } : false,
+    },
+    options.onIdleError,
+  );
 }

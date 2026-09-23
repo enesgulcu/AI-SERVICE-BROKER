@@ -1,4 +1,4 @@
-import type { LeadSnapshot } from '../domain/lead';
+import type { LeadSnapshot, LeadStatus } from '../domain/lead';
 
 export interface LeadCreatedV1 {
   eventId: string;
@@ -20,6 +20,7 @@ export interface CreateLeadTransaction {
   idempotencyKey: string;
   requestFingerprint: string;
   lead: LeadSnapshot;
+  rawPayload: Record<string, unknown>;
   event: LeadCreatedV1;
 }
 
@@ -39,6 +40,32 @@ export class IdempotencyConflictError extends Error {
     super('IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_REQUEST');
     this.name = IdempotencyConflictError.name;
   }
+}
+
+export class LeadVersionConflictError extends Error {
+  constructor() {
+    super('LEAD_VERSION_CONFLICT');
+    this.name = LeadVersionConflictError.name;
+  }
+}
+
+export interface LeadStatusStore {
+  findById(id: string): Promise<LeadSnapshot | null>;
+  save(lead: LeadSnapshot): Promise<void>;
+}
+
+export interface LeadSummary {
+  id: string;
+  status: LeadStatus;
+  version: number;
+  phone: string;
+  source: string;
+}
+
+export interface LeadDirectory {
+  findSummary(id: string): Promise<LeadSummary | null>;
+  listByStatus(status: LeadStatus): Promise<LeadSummary[]>;
+  countByStatus(): Promise<Array<{ status: string; count: number }>>;
 }
 
 export interface LeadIngestionPort {

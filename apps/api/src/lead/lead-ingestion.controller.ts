@@ -4,6 +4,7 @@ import {
   type IngestLeadResponseV1,
 } from '@ai-service-broker/contracts';
 import {
+  Body,
   Controller,
   Headers,
   HttpStatus,
@@ -11,8 +12,9 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { Body } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { randomUUID } from 'node:crypto';
+import { readCorrelationId } from '../platform/http/correlation-id';
 import { ZodValidationPipe } from '../platform/http/zod-validation.pipe';
 import { LeadIngestionService } from './lead-ingestion.service';
 
@@ -28,10 +30,7 @@ export class LeadIngestionController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<IngestLeadResponseV1> {
-    const correlationId =
-      typeof request.id === 'string' || typeof request.id === 'number'
-        ? String(request.id)
-        : 'unknown';
+    const correlationId = readCorrelationId(request.id) ?? randomUUID();
     const result = await this.leadIngestionService.ingest({
       body,
       idempotencyKey,

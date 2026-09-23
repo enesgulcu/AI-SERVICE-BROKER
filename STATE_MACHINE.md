@@ -81,6 +81,20 @@ The previous state must be stored; it must not be guessed.
 Reactivation starts a new workflow linked to the prior one unless an approved
 transition-policy version explicitly permits reopening.
 
+## Implemented policy `workflow-v1`
+
+Human commands may record `INTERESTED` and `NO_RESPONSE` from `CONTACTED`,
+`MANUAL_REVIEW` from a non-terminal state, and `CLOSED_LOST` with a fixed
+reason. A held state returns only to its stored resume state. First contact
+keeps `NEW → CONTACT_PENDING → CONTACTED`.
+
+`INTERESTED → QUALIFYING` starts requirement collection. `QUALIFYING → QUALIFIED`
+happens only inside requirement confirmation, after the home-helper schema is
+ready. The public workflow command cannot set `QUALIFIED`.
+
+`ANALYZED`, quote states, `CUSTOMER_ACCEPTED`, `JOB_READY`, and `BLOCKED` stay
+closed. No workflow command sends a message.
+
 ## Future workflow
 
 Worker search, reservation, matching, readiness, active service, incidents and

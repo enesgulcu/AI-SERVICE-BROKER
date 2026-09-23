@@ -23,6 +23,19 @@ describe('Lead', () => {
     });
   });
 
+  it('moves to contact pending and contacted only in order', () => {
+    const pending = Lead.create(validInput).markContactPending();
+    const contacted = pending.markContacted();
+
+    expect(pending.snapshot()).toMatchObject({ status: 'CONTACT_PENDING', version: 2 });
+    expect(contacted.snapshot()).toMatchObject({ status: 'CONTACTED', version: 3 });
+    expect(pending.releaseToNew().snapshot()).toMatchObject({ status: 'NEW', version: 3 });
+  });
+
+  it('rejects a contact transition from the wrong status', () => {
+    expect(() => Lead.create(validInput).markContacted()).toThrow(LeadInvariantError);
+  });
+
   it('protects date values from external mutation', () => {
     const lead = Lead.create(validInput);
     const firstSnapshot = lead.snapshot();

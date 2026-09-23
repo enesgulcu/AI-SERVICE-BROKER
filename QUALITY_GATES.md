@@ -50,7 +50,12 @@ Mandatory specialist/human review applies to:
 - Deploy immutable artifacts through development → staging → production.
 - Migrations must be backward-compatible where possible and include rollback or
   forward-recovery instructions.
-- Feature flags default off for new autonomous behavior.
+- Feature flags default off for new autonomous behavior. `AUTOMATION_PAUSED=true`
+  stops automated outbound delivery and the outbox drain, and blocks a return
+  to `AI_ACTIVE`. `PERSONAL_DATA_MODE=synthetic` blocks real lead sources.
+  `WEBHOOK_SECRET` empty rejects every inbound webhook. No flag turns on
+  WhatsApp, an approved price, or a contract. Rollback is to set
+  `AUTOMATION_PAUSED=true` and leave personal data in synthetic mode.
 - Define measurable success, guardrail and rollback thresholds before pilots.
 - Record release version, config/policy versions and verification evidence.
 

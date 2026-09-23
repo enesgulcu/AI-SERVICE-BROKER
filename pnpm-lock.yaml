@@ -44,15 +44,36 @@ importers:
       '@ai-service-broker/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@ai-service-broker/contact':
+        specifier: workspace:*
+        version: link:../../packages/contact
       '@ai-service-broker/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@ai-service-broker/conversation':
+        specifier: workspace:*
+        version: link:../../packages/conversation
       '@ai-service-broker/lead':
         specifier: workspace:*
         version: link:../../packages/lead
+      '@ai-service-broker/messaging':
+        specifier: workspace:*
+        version: link:../../packages/messaging
+      '@ai-service-broker/outbox':
+        specifier: workspace:*
+        version: link:../../packages/outbox
       '@ai-service-broker/postgres':
         specifier: workspace:*
         version: link:../../packages/postgres
+      '@ai-service-broker/requirement':
+        specifier: workspace:*
+        version: link:../../packages/requirement
+      '@ai-service-broker/safety':
+        specifier: workspace:*
+        version: link:../../packages/safety
+      '@ai-service-broker/workflow':
+        specifier: workspace:*
+        version: link:../../packages/workflow
       '@nestjs/common':
         specifier: 'catalog:'
         version: 11.2.5(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -162,6 +183,12 @@ importers:
       '@ai-service-broker/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@ai-service-broker/outbox':
+        specifier: workspace:*
+        version: link:../../packages/outbox
+      '@ai-service-broker/postgres':
+        specifier: workspace:*
+        version: link:../../packages/postgres
       '@nestjs/common':
         specifier: 'catalog:'
         version: 11.2.5(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -245,11 +272,66 @@ importers:
         specifier: ^8.20.0
         version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
 
+  packages/architecture:
+    devDependencies:
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   packages/config:
     dependencies:
       zod:
         specifier: ^4.1.11
         version: 4.6.5
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/contact:
+    dependencies:
+      '@ai-service-broker/lead':
+        specifier: workspace:*
+        version: link:../lead
+      '@ai-service-broker/messaging':
+        specifier: workspace:*
+        version: link:../messaging
     devDependencies:
       '@eslint/js':
         specifier: ^9.36.0
@@ -313,7 +395,131 @@ importers:
         specifier: ^8.44.1
         version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
 
+  packages/conversation:
+    dependencies:
+      '@ai-service-broker/customer':
+        specifier: workspace:*
+        version: link:../customer
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/customer:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
   packages/lead:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/messaging:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/outbox:
     devDependencies:
       '@eslint/js':
         specifier: ^9.36.0
@@ -348,9 +554,27 @@ importers:
       '@ai-service-broker/config':
         specifier: workspace:*
         version: link:../config
+      '@ai-service-broker/contact':
+        specifier: workspace:*
+        version: link:../contact
+      '@ai-service-broker/conversation':
+        specifier: workspace:*
+        version: link:../conversation
       '@ai-service-broker/lead':
         specifier: workspace:*
         version: link:../lead
+      '@ai-service-broker/outbox':
+        specifier: workspace:*
+        version: link:../outbox
+      '@ai-service-broker/requirement':
+        specifier: workspace:*
+        version: link:../requirement
+      '@ai-service-broker/safety':
+        specifier: workspace:*
+        version: link:../safety
+      '@ai-service-broker/workflow':
+        specifier: workspace:*
+        version: link:../workflow
       pg:
         specifier: ^8.16.3
         version: 8.23.0
@@ -382,6 +606,100 @@ importers:
       tsx:
         specifier: ^4.20.5
         version: 4.23.15
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/requirement:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/safety:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.44.1
+        version: 8.70.1(eslint@9.39.5)(typescript@5.9.3)
+
+  packages/workflow:
+    dependencies:
+      '@ai-service-broker/lead':
+        specifier: workspace:*
+        version: link:../lead
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.36.0
+        version: 9.39.5
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      eslint:
+        specifier: ^9.36.0
+        version: 9.39.5
+      globals:
+        specifier: ^16.4.0
+        version: 16.5.0
+      jest:
+        specifier: ^30.2.0
+        version: 30.5.2(@types/node@24.13.6)(ts-node@10.9.2(@types/node@24.13.6)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.4
+        version: 29.4.12(@babel/core@7.29.7)(@jest/transform@30.5.2)(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.13.6))(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

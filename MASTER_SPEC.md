@@ -110,3 +110,25 @@ Work proceeds in thin, releasable slices. Every slice must include:
 6. Rollback or feature-flag strategy for production-impacting behavior
 
 Current delivery state is tracked in `PROJECT_STATUS.md`.
+
+## 8. Implementation snapshot — 2026-09-23
+
+Section 4 is the V1 target. It is not a claim that every capability is built.
+
+Built for synthetic data:
+
+- Lead intake, guarded mock first contact, inbox, and conversation control
+- Workflow through `INTERESTED`, then home-helper qualification to `QUALIFIED`
+- Review-only risk signals, masked operator reads, rate limiting, and audited
+  redrive of already-safe dead letters
+
+Fail-closed until an open decision is approved:
+
+- Real personal data, WhatsApp, an issued quote, negotiation, follow-up, and
+  company facts
+- Acceptance, `JOB_READY`, and admin login
+
+Roadmap checklist: 42 of 58. `pnpm check` passed with 100 unit tests and 20 API
+end-to-end tests. Hosted Postgres has migrations `0001` through `0006`. Docker
+and Redis on this machine are still unverified. Detail and the remaining
+blockers are in `PROJECT_STATUS.md` and `ROADMAP.md`.

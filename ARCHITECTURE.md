@@ -31,7 +31,7 @@ The repository will contain:
 - `packages/observability`: logging, metrics and tracing primitives
 - `packages/testing`: test builders and integration harness
 - `packages/<module>`: framework-independent domain/application code shared by
-  API and worker; `packages/lead` is the first module
+  API and worker; `packages/lead` and `packages/contact` are the first modules
 - `packages/postgres`: SQL-first migrations, pool, and module-owned adapters
 
 API and worker share domain packages initially but deploy independently. No
@@ -121,7 +121,15 @@ application/domain code. Prompt and model versions are attached to decisions.
 Legal basis, retention periods, WhatsApp consent/template rules and AI-provider
 data-processing terms remain approval-gated decisions.
 
-## 9. Evolution
+## 9. Repository on 2026-09-23
+
+The target layout above is not all present. The repository now has `apps/api`,
+`apps/worker`, and domain packages for lead, contact, customer, conversation,
+workflow, requirement, messaging, safety, contracts, config, outbox, and
+postgres. There is no `apps/admin`, BullMQ worker, or Redis-backed lock yet.
+Redis remains defined in Compose and unverified. Admin login is not built.
+
+## 10. Evolution
 
 Modules are extracted into services only when operational evidence warrants it:
 independent scaling, ownership, release cadence, isolation or data residency.

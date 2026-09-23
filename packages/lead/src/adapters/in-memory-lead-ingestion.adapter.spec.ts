@@ -8,9 +8,11 @@ function transaction(overrides: Partial<CreateLeadTransaction> = {}): CreateLead
   return {
     idempotencyKey: 'lead:request-123',
     requestFingerprint: 'a'.repeat(64),
+    rawPayload: { note: 'evidence-only' },
     lead: {
       id: leadId,
       status: 'NEW',
+      version: 1,
       source: 'SYNTHETIC',
       sourceReference: 'listing-123',
       phone: '+905551112233',
@@ -46,6 +48,12 @@ describe('InMemoryLeadIngestionAdapter', () => {
     });
     expect(adapter.events).toHaveLength(1);
     expect(JSON.stringify(adapter.events[0])).not.toContain(first.lead.phone);
+    expect(JSON.stringify(adapter.events[0])).not.toContain('evidence-only');
+    await expect(adapter.findById(first.lead.id)).resolves.toMatchObject({
+      id: first.lead.id,
+      version: 1,
+      status: 'NEW',
+    });
   });
 
   it('replays the same idempotency key without a second event', async () => {

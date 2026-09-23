@@ -24,12 +24,15 @@ describe('AppController', () => {
   });
 
   describe('readiness', () => {
-    it('returns the API readiness state', () => {
-      expect(appController.getReadiness()).toMatchObject({
+    it('returns the API readiness state', async () => {
+      await expect(
+        appController.getReadiness({} as never),
+      ).resolves.toMatchObject({
         service: 'api',
         status: 'ok',
         checks: {
           configuration: 'ok',
+          database: 'skipped',
         },
       });
     });

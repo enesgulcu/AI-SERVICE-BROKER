@@ -20,7 +20,7 @@ export interface IngestLeadCommand {
   listingTitle?: string;
   listingText?: string;
   publishedAt?: Date;
-  rawPayloadReference?: string;
+  rawPayload?: Record<string, unknown>;
 }
 
 export class IngestLeadInputError extends Error {
@@ -56,8 +56,9 @@ export class IngestLead {
     }
 
     const occurredAt = this.clock.now();
+    const leadId = this.leadIdGenerator.next();
     const lead = Lead.create({
-      id: this.leadIdGenerator.next(),
+      id: leadId,
       source: command.source,
       sourceReference: command.sourceReference,
       phone: command.phone,
@@ -68,29 +69,30 @@ export class IngestLead {
       listingTitle: command.listingTitle,
       listingText: command.listingText,
       publishedAt: command.publishedAt,
-      rawPayloadReference: command.rawPayloadReference,
+      rawPayloadReference: leadId,
     });
-    const snapshot = lead.snapshot();
+    const storedLead = lead.snapshot();
     const event: LeadCreatedV1 = {
       eventId: this.eventIdGenerator.next(),
       eventType: 'LeadCreated',
       eventVersion: 1,
       aggregateType: 'Lead',
-      aggregateId: snapshot.id,
+      aggregateId: storedLead.id,
       occurredAt,
       correlationId: command.correlationId,
       payload: {
-        leadId: snapshot.id,
-        source: snapshot.source,
-        sourceReference: snapshot.sourceReference,
-        status: snapshot.status,
+        leadId: storedLead.id,
+        source: storedLead.source,
+        sourceReference: storedLead.sourceReference,
+        status: 'NEW',
       },
     };
 
     return this.persistence.createLeadWithOutbox({
       idempotencyKey: command.idempotencyKey,
       requestFingerprint: command.requestFingerprint,
-      lead: snapshot,
+      lead: storedLead,
+      rawPayload: command.rawPayload ?? {},
       event,
     });
   }

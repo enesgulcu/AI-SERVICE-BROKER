@@ -12,13 +12,19 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint \"src/**/*.ts\"",
     "test:coverage": "jest --runInBand --coverage",
-    "migrate": "tsx src/cli/migrate.ts",
+    "migrate": "node --env-file-if-exists=../../.env --import tsx src/cli/migrate.ts",
     "typecheck": "tsc --noEmit --incremental false",
     "test": "jest --runInBand"
   },
   "dependencies": {
     "@ai-service-broker/config": "workspace:*",
+    "@ai-service-broker/outbox": "workspace:*",
+    "@ai-service-broker/contact": "workspace:*",
+    "@ai-service-broker/conversation": "workspace:*",
+    "@ai-service-broker/workflow": "workspace:*",
     "@ai-service-broker/lead": "workspace:*",
+    "@ai-service-broker/requirement": "workspace:*",
+    "@ai-service-broker/safety": "workspace:*",
     "pg": "^8.16.3"
   },
   "devDependencies": {

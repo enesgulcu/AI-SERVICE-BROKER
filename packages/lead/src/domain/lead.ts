@@ -1,4 +1,11 @@
-export type LeadStatus = 'NEW';
+import {
+  decideWorkflowMove,
+  type ClosedLostReason,
+  type LeadStatus,
+  type WorkflowTarget,
+} from './workflow-move';
+
+export type { LeadStatus };
 
 export interface CreateLeadInput {
   id: string;
@@ -18,6 +25,9 @@ export interface CreateLeadInput {
 export interface LeadSnapshot {
   id: string;
   status: LeadStatus;
+  version: number;
+  previousStatus?: LeadStatus;
+  resumeStatus?: LeadStatus;
   source: string;
   sourceReference: string;
   phone: string;
@@ -39,7 +49,9 @@ export class LeadInvariantError extends Error {
       | 'INVALID_SOURCE_REFERENCE'
       | 'INVALID_PHONE'
       | 'INVALID_RECEIVED_AT'
-      | 'INVALID_PUBLISHED_AT',
+      | 'INVALID_PUBLISHED_AT'
+      | 'INVALID_VERSION'
+      | 'INVALID_LEAD_TRANSITION',
   ) {
     super(code);
     this.name = LeadInvariantError.name;
@@ -86,6 +98,7 @@ export class Lead {
     return new Lead({
       id,
       status: 'NEW',
+      version: 1,
       source,
       sourceReference,
       phone,
@@ -97,6 +110,71 @@ export class Lead {
       listingText: optionalTrimmed(input.listingText),
       publishedAt: input.publishedAt ? new Date(input.publishedAt) : undefined,
       rawPayloadReference: optionalTrimmed(input.rawPayloadReference),
+    });
+  }
+
+  static rehydrate(snapshot: LeadSnapshot): Lead {
+    if (!Number.isInteger(snapshot.version) || snapshot.version < 1) {
+      throw new LeadInvariantError('INVALID_VERSION');
+    }
+
+    const created = Lead.create(snapshot);
+    return new Lead({
+      ...created.snapshot(),
+      status: snapshot.status,
+      version: snapshot.version,
+      previousStatus: snapshot.previousStatus,
+      resumeStatus: snapshot.resumeStatus,
+    });
+  }
+
+  applyWorkflowMove(
+    target: WorkflowTarget,
+    reasonCode: ClosedLostReason | null,
+    requirementsReady = false,
+  ): Lead {
+    const decision = decideWorkflowMove({
+      from: this.state.status,
+      to: target,
+      previousStatus: this.state.previousStatus ?? null,
+      resumeStatus: this.state.resumeStatus ?? null,
+      reasonCode,
+      requirementsReady,
+    });
+    if (!decision.ok) {
+      throw new LeadInvariantError('INVALID_LEAD_TRANSITION');
+    }
+
+    return new Lead({
+      ...this.snapshot(),
+      status: decision.status,
+      version: this.state.version + 1,
+      previousStatus: decision.previousStatus ?? undefined,
+      resumeStatus: decision.resumeStatus ?? undefined,
+    });
+  }
+
+  markContactPending(): Lead {
+    return this.transition('NEW', 'CONTACT_PENDING');
+  }
+
+  markContacted(): Lead {
+    return this.transition('CONTACT_PENDING', 'CONTACTED');
+  }
+
+  releaseToNew(): Lead {
+    return this.transition('CONTACT_PENDING', 'NEW');
+  }
+
+  private transition(expected: LeadStatus, status: LeadStatus): Lead {
+    if (this.state.status !== expected) {
+      throw new LeadInvariantError('INVALID_LEAD_TRANSITION');
+    }
+
+    return new Lead({
+      ...this.snapshot(),
+      status,
+      version: this.state.version + 1,
     });
   }
 

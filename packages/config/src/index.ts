@@ -13,14 +13,27 @@ const apiEnvironmentSchema = baseEnvironmentSchema.extend({
   API_PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
   LEAD_PERSISTENCE: z.enum(['memory', 'postgres']).default('memory'),
   PERSONAL_DATA_MODE: z.enum(['synthetic', 'approved']).default('synthetic'),
+  AUTOMATION_PAUSED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
   AUTO_FIRST_CONTACT: z
     .enum(['true', 'false'])
     .default('false')
     .transform((value) => value === 'true'),
+  WEBHOOK_SECRET: z.string().default(''),
 });
 
 const workerEnvironmentSchema = baseEnvironmentSchema.extend({
   WORKER_NAME: z.string().trim().min(1).default('default'),
+  OUTBOX_PERSISTENCE: z.enum(['memory', 'postgres']).default('memory'),
+  OUTBOX_BATCH_SIZE: z.coerce.number().int().min(1).max(100).default(20),
+  OUTBOX_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(20).default(5),
+  OUTBOX_POLL_MS: z.coerce.number().int().min(1_000).max(60_000).default(5_000),
+  AUTOMATION_PAUSED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
 });
 
 const databaseEnvironmentSchema = baseEnvironmentSchema.extend({

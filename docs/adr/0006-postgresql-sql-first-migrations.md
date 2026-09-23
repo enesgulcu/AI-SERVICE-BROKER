@@ -19,6 +19,8 @@ The migration runner:
 - takes a PostgreSQL advisory lock,
 - creates a migration ledger when absent,
 - applies files in lexical order inside individual transactions,
+- sends each file as one simple-query script, so every statement in that file
+  participates in the same transaction,
 - stores a SHA-256 checksum,
 - refuses to continue if an applied file's checksum changes.
 

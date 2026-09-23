@@ -39,3 +39,40 @@ Dates use ISO 8601. This project has not released a production version.
 - In-memory lead adapter implementing the same atomic ingestion port
 - `POST /v1/leads` with idempotency, fingerprint conflict, and synthetic-only
   personal-data mode
+- Synthetic inbound recording: one unverified customer per phone, one mock
+  conversation, inbox idempotency, and `InboundMessageRecorded` without phone
+  or message body. No reply is sent.
+- API, worker, and migration commands load a gitignored `.env` when it exists.
+  Hosted Postgres is selected with `DATABASE_SSL=require` and
+  `LEAD_PERSISTENCE=postgres`.
+- Operators can set a conversation to human control or paused. The global
+  automation pause blocks a return to AI control. The change is versioned and
+  audited, and no message is sent.
+- Workflow policy `workflow-v1` records interest, no response, manual review,
+  and a closed outcome. Quote, acceptance, job, analysis, and policy-block
+  transitions stay closed. First contact is not bypassed.
+- Requirement schema `regular-home-helper-v1` records versions, evidence,
+  contradictions, and special requirements. Only the confirmation flow can
+  mark a lead `QUALIFIED`. Field values stay out of events.
+- Empty policy `policy-empty-v1`, review-only risk signals, a deterministic
+  price function with no approved card, and closed quote, negotiation, and
+  follow-up commands.
+- Mock outbound assessment, fail-closed webhook signatures, POST rate limiting,
+  and audited redrive of already-safe dead letters.
+- Masked lead view and manual-review queue. No admin login.
+- Implementation snapshot recorded in `MASTER_SPEC.md`, `PROJECT_STATUS.md`,
+  `ROADMAP.md`, `ARCHITECTURE.md`, and `README.md`: 42 of 58 roadmap items, safe
+  path through qualification, commercial and real-data gates still closed.
+
+### Fixed — 2026-09-23
+
+- Correlation IDs shorter than 8 safe characters are replaced before lead
+  ingestion, instead of being accepted by HTTP and then rejected.
+- Multi-statement SQL migrations run as one simple-query script per file, so
+  the whole file commits or rolls back together.
+- API PostgreSQL pools handle idle connection errors and close on shutdown.
+- Synthetic first contact requires a guarded draft and human approval before a
+  mock delivery. Raw payloads are stored separately from events and audit.
+- The worker drains the transactional outbox. It records known events and
+  refuses unknown, unsafe or non-mock deliveries. Automation pause stops the
+  drain.
