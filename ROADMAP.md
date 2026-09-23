@@ -33,7 +33,9 @@ Exit: one command starts local dependencies/apps and CI proves the skeleton.
 
 ## Phase 2 — First vertical slice: controlled lead contact
 
-- [ ] Lead module, normalization and source provenance
+- [x] Framework-independent Lead domain/application module
+- [x] Versioned lead ingestion and `LeadCreated` contracts
+- [ ] Source-adapter normalization and raw-payload provenance
 - [ ] Source-specific contact eligibility and suppression decision
 - [ ] PostgreSQL migrations and repository adapter
 - [ ] Idempotent intake API

@@ -28,3 +28,7 @@ Dates use ISO 8601. This project has not released a production version.
 - Validated/generated correlation IDs and stable safe error responses
 - Helmet security headers and separate liveness/readiness endpoints
 - Expanded API end-to-end coverage for headers, correlation and error safety
+- Versioned Zod contracts for lead ingestion and idempotency
+- Framework-independent Lead aggregate with explicit invariants
+- Atomic lead persistence/outbox application port and `LeadCreated` V1 event
+- Contract rule keeping direct customer PII out of domain events

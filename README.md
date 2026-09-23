@@ -47,6 +47,8 @@ pnpm --filter @ai-service-broker/worker dev
 - `QUALITY_GATES.md`: definition of ready/done and release gates
 - `PROJECT_STATUS.md`: current work and verification evidence
 - `docs/adr/`: durable architecture decisions
+- `packages/contracts`: versioned external/event schemas
+- `packages/lead`: framework-independent lead domain and application logic
 
 Do not use real personal data until the legal/privacy and infrastructure gates
 listed in `OPEN_DECISIONS.md` are resolved.

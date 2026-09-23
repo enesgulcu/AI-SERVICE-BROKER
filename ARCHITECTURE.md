@@ -30,6 +30,8 @@ The repository will contain:
 - `packages/config`: validated configuration
 - `packages/observability`: logging, metrics and tracing primitives
 - `packages/testing`: test builders and integration harness
+- `packages/<module>`: framework-independent domain/application code shared by
+  API and worker; `packages/lead` is the first module
 
 API and worker share domain packages initially but deploy independently. No
 module may depend on an application entry point.
