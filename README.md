@@ -22,7 +22,13 @@ pnpm check
 pnpm --filter @ai-service-broker/api dev
 ```
 
-API liveness: `GET http://localhost:3000/health/live`
+API health:
+
+- Liveness: `GET http://localhost:3000/health/live`
+- Readiness: `GET http://localhost:3000/health/ready`
+
+Every HTTP response includes `x-correlation-id`; callers may supply a safe
+correlation ID for cross-service tracing.
 
 Start the background worker separately:
 

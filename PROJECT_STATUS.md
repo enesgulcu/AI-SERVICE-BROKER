@@ -26,19 +26,23 @@ domain behavior or real personal data.
   release.
 - Independent architecture and compliance reviews incorporated into explicit
   go-live gates, open decisions and the legal approval checklist.
+- Structured Pino HTTP logging with safe request serialization and log
+  redaction added.
+- Correlation IDs are validated/generated, propagated to responses and included
+  in the stable HTTP error contract.
+- Helmet security headers plus separate liveness/readiness endpoints added.
 
 ## In progress
 
-- Structured logging, correlation IDs and error contract
 - PostgreSQL/Redis local development and integration-test environment
+- Database migration, inbox/outbox and module-boundary foundations
 
 ## Next
 
-1. Add structured logging, correlation IDs and readiness checks.
-2. Add PostgreSQL/Redis infrastructure after a container runtime is available.
-3. Add migration tooling, inbox/outbox primitives and architecture tests.
-4. Complete the conversation/risk evaluation catalogue.
-5. Implement the controlled, human-approved synthetic lead contact slice.
+1. Add PostgreSQL/Redis infrastructure after a container runtime is available.
+2. Add migration tooling, inbox/outbox primitives and architecture tests.
+3. Complete the conversation/risk evaluation catalogue.
+4. Implement the controlled, human-approved synthetic lead contact slice.
 
 ## Current blockers
 
@@ -53,7 +57,7 @@ cross-border processing, and WhatsApp opt-in/template operation.
 
 Verified on 2026-09-23:
 
-- `pnpm check`: passed (format, lint, type-check, 6 unit tests, 1 API end-to-end
-  test and production builds)
+- `pnpm check`: passed (format, lint, type-check, 7 unit tests, 5 API end-to-end
+  tests and production builds)
 - `pnpm audit --prod --audit-level high`: passed with no known vulnerabilities
 - Node.js `v22.15.0`, pnpm `11.5.3`

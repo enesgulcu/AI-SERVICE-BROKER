@@ -25,7 +25,8 @@ source-of-truth hierarchy.
 - [x] API liveness and worker process skeletons
 - [x] Validated environment configuration
 - [ ] Local PostgreSQL/Redis environment
-- [ ] Structured logging, correlation IDs and error contract
+- [x] Structured logging, correlation IDs and safe HTTP error contract
+- [x] Security headers and liveness/readiness endpoints
 - [x] CI quality and dependency-security checks
 
 Exit: one command starts local dependencies/apps and CI proves the skeleton.

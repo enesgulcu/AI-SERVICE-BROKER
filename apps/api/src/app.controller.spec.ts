@@ -22,4 +22,16 @@ describe('AppController', () => {
       });
     });
   });
+
+  describe('readiness', () => {
+    it('returns the API readiness state', () => {
+      expect(appController.getReadiness()).toMatchObject({
+        service: 'api',
+        status: 'ok',
+        checks: {
+          configuration: 'ok',
+        },
+      });
+    });
+  });
 });

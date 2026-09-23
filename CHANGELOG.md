@@ -24,3 +24,7 @@ Dates use ISO 8601. This project has not released a production version.
 - Mandatory real-data, outbound, commercial and safety go-live gates
 - Legal compliance approval checklist
 - Controlled, human-approved mock-contact first vertical slice
+- Structured Pino HTTP logging with redacted, query-free request metadata
+- Validated/generated correlation IDs and stable safe error responses
+- Helmet security headers and separate liveness/readiness endpoints
+- Expanded API end-to-end coverage for headers, correlation and error safety
