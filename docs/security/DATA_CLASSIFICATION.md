@@ -20,6 +20,9 @@ company policies, pricing logic, risk reasons and non-public analytics.
 
 Direct identifiers, phone numbers, addresses, identity documents, sensitive
 incident content, authentication data, access tokens, secrets and payment data.
+Health/disability information, child data, photos/media and third-party
+household information are restricted and may also require special legal
+treatment.
 
 ## Handling baseline
 
@@ -35,6 +38,11 @@ incident content, authentication data, access tokens, secrets and payment data.
 - Backups, exports and dead-letter payloads inherit the source classification.
 - Deletion/anonymization must cover primary records, projections, caches and
   operational copies according to the approved retention schedule.
+- Audit entries contain opaque identifiers and reason codes where possible;
+  identifying evidence is stored separately so lawful erasure/anonymization
+  does not require rewriting business history.
+- Unexpected media or special-category data is quarantined from AI processing
+  until an approved policy determines handling.
 
 ## Prohibited until approved
 
@@ -44,3 +52,5 @@ incident content, authentication data, access tokens, secrets and payment data.
 - Secrets in `.env` files shared through chat or committed to Git
 - Model training/fine-tuning on customer data
 - Cross-border transfer without the required legal and security assessment
+- Collection of protected-trait worker preferences without an approved,
+  objectively necessary and lawful policy

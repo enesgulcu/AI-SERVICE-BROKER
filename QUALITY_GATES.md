@@ -53,3 +53,37 @@ Mandatory specialist/human review applies to:
 - Feature flags default off for new autonomous behavior.
 - Define measurable success, guardrail and rollback thresholds before pilots.
 - Record release version, config/policy versions and verification evidence.
+
+## Real-data and outbound go-live gates
+
+No production lead ingestion or outbound customer message is permitted until:
+
+1. Source-specific acquisition/contact authority, IYS/6563 treatment, proof of
+   permission, opt-out and suppression behavior have written legal approval.
+2. KVKK inventory, notice, processing conditions, retention/destruction,
+   data-subject request and cross-border processor controls are approved.
+3. WhatsApp opt-in, approved templates, 24-hour window, unsubscribe, quality
+   and rate-limit rules are enforced and tested.
+4. Production admins use MFA and least-privilege RBAC; restricted reads and
+   exports are audited.
+5. Webhook signature, timestamp/replay protection, inbox idempotency,
+   conversation locking and transactional outbox tests pass.
+6. Guard or policy service failure prevents delivery; it never fails open.
+7. Human takeover, kill switch, queued-message cancellation, DLQ recovery and
+   backup restore procedures are exercised.
+8. Model/provider terms prohibit unauthorized training and satisfy approved
+   retention, subprocessor, region and transfer requirements.
+
+## Commercial and safety go-live gates
+
+- Price, discount, tax, margin and exception rules are deterministic, versioned
+  and approved.
+- Quote scope, period, tax treatment, validity and acceptance semantics are
+  explicit and customer-confirmed.
+- `JOB_READY` requires confirmed scope, price, start date, contact eligibility
+  and no pending mandatory review.
+- Risk score alone cannot punish or block; enforcement is policy-authorized,
+  explainable, appealable and monitored for false positives/fairness.
+- Protected-trait preferences are rejected or reviewed under approved policy.
+- Dashboards include opt-out, complaints, wrong-price events, guard blocks,
+  review SLA, false positives and delivery quality—not conversion alone.

@@ -80,7 +80,8 @@ the latest phase that can safely proceed without an answer.
 - Status: Open
 - Owner: Security/Operations
 - Blocking point: Admin pilot
-- Needed: identity provider, MFA, roles, sensitive-field masking and break-glass.
+- Needed: identity provider, mandatory production MFA, roles, sensitive-field
+  masking, privileged-action reauthentication and break-glass.
 - Safe default: No public admin deployment.
 
 ## OD-010 — Infrastructure and data residency
@@ -109,6 +110,77 @@ the latest phase that can safely proceed without an answer.
 - Needed: canonical funnel definitions, attribution model, event retention,
   dashboards, experiment guardrails and privacy limits.
 - Safe default: First-party operational events only.
+
+## OD-013 — Lead-source legality and commercial communication
+
+- Status: Legal review required
+- Owner: Legal/Marketing/Operations
+- Blocking point: Any real lead ingestion or first contact
+- Needed: source-by-source acquisition authority and platform terms, contact
+  permission evidence, 6563/IYS applicability or exception, rejection proof,
+  suppression rules and required disclosure.
+- Safe default: Synthetic leads only; no autonomous first contact.
+
+## OD-014 — Offer, acceptance and contract semantics
+
+- Status: Legal/business review required
+- Owner: Legal/Finance/Product
+- Blocking point: Production `CUSTOMER_ACCEPTED`
+- Needed: whether acceptance is legally binding, pre-contract information,
+  taxes/VAT, validity, withdrawal/cancellation and dispute terms.
+- Safe default: Workflow acceptance is operational intent only and creates no
+  contract or payment obligation.
+
+## OD-015 — AI transparency
+
+- Status: Legal/product review required
+- Owner: Legal/Product
+- Blocking point: Production AI conversation
+- Needed: when and how the customer is told they are interacting with
+  automation, how human assistance is requested and which messages require
+  disclosure.
+- Safe default: Clearly disclose automated assistance and offer human review.
+
+## OD-016 — Sensitive and third-party data boundaries
+
+- Status: Legal/security review required
+- Owner: Legal/Security/Product
+- Blocking point: Real requirement collection
+- Needed: rules for health, disability, child, household-member, identity,
+  photo/media and free-text data; redaction, quarantine and deletion behavior.
+- Safe default: Do not request health, identity-document, photo or other special
+  category data; quarantine unexpected media from AI processing.
+
+## OD-017 — Fairness and worker preferences
+
+- Status: Legal/safety review required
+- Owner: Legal/Safety/Operations
+- Blocking point: Preference-based matching or enforcement
+- Needed: which age, sex, nationality, marital status, appearance, language and
+  location criteria are objectively necessary, prohibited or reviewable;
+  monitoring and appeal rules.
+- Safe default: Store no protected-trait preference for matching unless an
+  approved policy identifies a lawful objective requirement.
+
+## OD-018 — Audit retention versus erasure
+
+- Status: Legal/security/architecture review required
+- Owner: Data controller/Legal/Security
+- Blocking point: Real personal data persistence
+- Needed: retention per data class, immutable evidence minimization, separation
+  of identifying payloads from audit metadata, anonymization and legal holds.
+- Safe default: Audit records contain opaque references and reason codes, not
+  message bodies or direct identifiers.
+
+## OD-019 — Human review operating model
+
+- Status: Open
+- Owner: Operations/Safety
+- Blocking point: Controlled real-data pilot
+- Needed: staffing hours, severity-based SLA, escalation owner, timeout
+  behavior, dual approval and queue-backlog limits.
+- Safe default: Mandatory review expiry pauses outbound actions; it never
+  auto-approves.
 
 ## Decision process
 

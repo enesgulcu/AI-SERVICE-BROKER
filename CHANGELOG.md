@@ -20,3 +20,7 @@ Dates use ISO 8601. This project has not released a production version.
 - API liveness endpoint with unit and end-to-end tests
 - GitHub Actions quality and production dependency-audit workflow
 - Explicit dependency build allow-list and patched `multer` security override
+- Expanded legal/privacy/fairness/AI-transparency decision register
+- Mandatory real-data, outbound, commercial and safety go-live gates
+- Legal compliance approval checklist
+- Controlled, human-approved mock-contact first vertical slice

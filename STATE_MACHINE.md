@@ -22,6 +22,8 @@ Status: Initial V1 contract
 - `MANUAL_REVIEW`: automated progression is suspended for review.
 
 Control mode is orthogonal: `AI_ACTIVE | HUMAN_CONTROL | PAUSED`.
+`CUSTOMER_ACCEPTED` is an operational workflow fact, not proof that a legally
+binding contract or payment obligation exists; that meaning requires OD-014.
 
 ## Normal progression
 

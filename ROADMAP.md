@@ -12,6 +12,8 @@ worker boundary, tests, observability and documentation.
 - [x] Open-decision register
 - [x] Persistent repository development rule
 - [x] Threat model and data-classification register
+- [x] Legal/compliance approval checklist
+- [ ] Requirement IDs and specification traceability matrix
 - [ ] Conversation/risk evaluation catalogue
 
 Exit: critical unknowns have safe defaults and implementation has an agreed
@@ -28,15 +30,19 @@ source-of-truth hierarchy.
 
 Exit: one command starts local dependencies/apps and CI proves the skeleton.
 
-## Phase 2 — First vertical slice: lead intake
+## Phase 2 — First vertical slice: controlled lead contact
 
 - [ ] Lead module, normalization and source provenance
+- [ ] Source-specific contact eligibility and suppression decision
 - [ ] PostgreSQL migrations and repository adapter
 - [ ] Idempotent intake API
-- [ ] Outbox/audit event
+- [ ] First-message draft through policy/legal/promise guards
+- [ ] Mandatory human approval and mock messaging adapter
+- [ ] State transition, transactional outbox and audit evidence
 - [ ] Unit, integration and contract tests
 
-Exit: duplicate submissions create one auditable normalized lead.
+Exit: a duplicate-safe synthetic lead can reach `CONTACTED` only through an
+eligible, guarded, human-approved mock delivery with complete audit evidence.
 
 ## Phase 3 — Workflow, customer and conversation core
 

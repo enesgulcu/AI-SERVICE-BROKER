@@ -24,6 +24,8 @@ domain behavior or real personal data.
 - CI workflow and explicit dependency build allow-list added.
 - High-severity transitively vulnerable `multer` version overridden to a patched
   release.
+- Independent architecture and compliance reviews incorporated into explicit
+  go-live gates, open decisions and the legal approval checklist.
 
 ## In progress
 
@@ -36,7 +38,7 @@ domain behavior or real personal data.
 2. Add PostgreSQL/Redis infrastructure after a container runtime is available.
 3. Add migration tooling, inbox/outbox primitives and architecture tests.
 4. Complete the conversation/risk evaluation catalogue.
-5. Implement the idempotent lead-intake vertical slice.
+5. Implement the controlled, human-approved synthetic lead contact slice.
 
 ## Current blockers
 
@@ -44,6 +46,8 @@ Docker is not installed on the current machine, so local PostgreSQL/Redis and
 container-backed integration tests cannot yet be verified. Foundation work can
 continue meanwhile. Real-data ingestion, production messaging, pricing and
 autonomous outreach remain blocked by decisions in `OPEN_DECISIONS.md`.
+The highest-priority approvals are source/contact legality, KVKK and
+cross-border processing, and WhatsApp opt-in/template operation.
 
 ## Verification
 
