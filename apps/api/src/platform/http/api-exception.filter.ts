@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
+import { isApiErrorBody } from './api-error';
 
 interface ErrorDescriptor {
   code: string;
@@ -56,7 +57,11 @@ export class ApiExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    const responseBody =
+      exception instanceof HttpException ? exception.getResponse() : undefined;
+    const customBody = isApiErrorBody(responseBody) ? responseBody : undefined;
     const descriptor =
+      customBody ??
       ERROR_DESCRIPTORS[status] ??
       (status >= 400 && status < 500
         ? {
@@ -90,7 +95,9 @@ export class ApiExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       error: {
-        ...descriptor,
+        code: descriptor.code,
+        message: descriptor.message,
+        ...(customBody?.fields ? { fields: customBody.fields } : {}),
         status,
         correlationId,
         timestamp: new Date().toISOString(),

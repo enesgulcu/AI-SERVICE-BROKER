@@ -45,6 +45,9 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@ai-service-broker/(.*)$": "<rootDir>/../../$1/src/index.ts"
+    }
   }
 }

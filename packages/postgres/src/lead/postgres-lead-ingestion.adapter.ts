@@ -1,7 +1,8 @@
-import type {
-  CreateLeadTransaction,
-  CreateLeadTransactionResult,
-  LeadIngestionPort,
+import {
+  IdempotencyConflictError,
+  type CreateLeadTransaction,
+  type CreateLeadTransactionResult,
+  type LeadIngestionPort,
 } from '@ai-service-broker/lead';
 import type { SqlClient, SqlPool } from '../database';
 
@@ -14,12 +15,7 @@ interface LeadIdRow extends Record<string, unknown> {
   id: string;
 }
 
-export class IdempotencyConflictError extends Error {
-  constructor() {
-    super('IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_REQUEST');
-    this.name = IdempotencyConflictError.name;
-  }
-}
+export { IdempotencyConflictError };
 
 export class PersistenceInvariantError extends Error {
   constructor(message: string) {

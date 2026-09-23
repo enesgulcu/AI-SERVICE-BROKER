@@ -36,3 +36,6 @@ Dates use ISO 8601. This project has not released a production version.
 - Atomic lead + outbox adapter with idempotency fingerprint conflicts
 - Canonical request fingerprint helper
 - Local PostgreSQL/Redis Compose definition and `pnpm db:migrate`
+- In-memory lead adapter implementing the same atomic ingestion port
+- `POST /v1/leads` with idempotency, fingerprint conflict, and synthetic-only
+  personal-data mode

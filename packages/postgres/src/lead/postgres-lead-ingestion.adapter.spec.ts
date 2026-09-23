@@ -1,9 +1,6 @@
-import type { CreateLeadTransaction } from '@ai-service-broker/lead';
+import { IdempotencyConflictError, type CreateLeadTransaction } from '@ai-service-broker/lead';
 import type { SqlClient, SqlPool, SqlQueryResult } from '../database';
-import {
-  IdempotencyConflictError,
-  PostgresLeadIngestionAdapter,
-} from './postgres-lead-ingestion.adapter';
+import { PostgresLeadIngestionAdapter } from './postgres-lead-ingestion.adapter';
 
 interface ScriptStep {
   includes: string;

@@ -8,6 +8,8 @@ a new version; they do not silently mutate active consumers.
 Authoritative schema:
 `packages/contracts/src/v1/lead-ingestion.contract.ts`
 
+HTTP endpoint: `POST /v1/leads`
+
 Required request controls:
 
 - `Idempotency-Key` is 8–128 safe characters.
@@ -28,9 +30,14 @@ raw evidence separately under restricted access and passes only an opaque
 
 Response dispositions:
 
-- `CREATED`: a new lead and outbox event committed atomically.
-- `DUPLICATE`: the idempotency key or `(source, sourceReference)` already maps
-  to an existing lead; no second lead/event is created.
+- `201 CREATED`: a new lead and outbox event committed atomically.
+- `200 DUPLICATE`: the idempotency key or `(source, sourceReference)` already
+  maps to an existing lead; no second lead/event is created.
+- `403 REAL_DATA_INGESTION_BLOCKED`: source is not `SYNTHETIC`/`TEST` while
+  `PERSONAL_DATA_MODE=synthetic`.
+- `409 IDEMPOTENCY_KEY_REUSED`: the same key was used with a different body.
+
+`AUTO_FIRST_CONTACT` remains off. Ingestion never sends a customer message.
 
 ## LeadCreated event V1
 

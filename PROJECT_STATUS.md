@@ -42,16 +42,19 @@ synthetic ingestion API. Real personal data remains blocked.
   different body is a conflict.
 - Compose file defines local PostgreSQL and Redis. Runtime is not yet verified
   because Docker is not installed on this machine.
+- `POST /v1/leads` accepts synthetic leads with idempotency, fingerprint
+  conflicts, and real-source blocking. First contact remains disabled.
 
 ## In progress
 
 - Container-backed PostgreSQL/Redis verification
-- Controlled lead ingestion HTTP API
+- Contact eligibility, first-message draft, and human-approval path
 
 ## Next
 
 1. Verify Compose, migrations, and repository behavior after Docker is available.
-2. Expose the idempotent lead ingestion API with human-approval defaults.
+2. Add contact eligibility and a guarded first-message draft that requires
+   human approval.
 3. Add module-boundary architecture tests.
 4. Complete the conversation/risk evaluation catalogue.
 
@@ -68,7 +71,7 @@ cross-border processing, and WhatsApp opt-in/template operation.
 
 Verified on 2026-09-23:
 
-- `pnpm check`: passed (format, lint, type-check, 37 unit tests, 5 API end-to-end
+- `pnpm check`: passed (format, lint, type-check, 46 unit tests, 9 API end-to-end
   tests and production builds)
 - `pnpm audit --prod --audit-level high`: passed with no known vulnerabilities
 - Node.js `v22.15.0`, pnpm `11.5.3`

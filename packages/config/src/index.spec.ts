@@ -1,11 +1,19 @@
-import { loadApiEnvironment, loadDatabaseEnvironment, loadWorkerEnvironment } from './index';
+import {
+  isSyntheticLeadSource,
+  loadApiEnvironment,
+  loadDatabaseEnvironment,
+  loadWorkerEnvironment,
+} from './index';
 
 describe('environment configuration', () => {
   it('provides safe local defaults', () => {
     expect(loadApiEnvironment({})).toEqual({
       API_PORT: 3000,
+      AUTO_FIRST_CONTACT: false,
+      LEAD_PERSISTENCE: 'memory',
       LOG_LEVEL: 'info',
       NODE_ENV: 'local',
+      PERSONAL_DATA_MODE: 'synthetic',
     });
   });
 
@@ -32,5 +40,11 @@ describe('environment configuration', () => {
     });
     expect(() => loadDatabaseEnvironment({})).toThrow();
     expect(() => loadDatabaseEnvironment({ DATABASE_URL: 'mysql://localhost/database' })).toThrow();
+  });
+
+  it('recognizes only approved synthetic lead sources', () => {
+    expect(isSyntheticLeadSource('synthetic')).toBe(true);
+    expect(isSyntheticLeadSource('TEST')).toBe(true);
+    expect(isSyntheticLeadSource('SAHIBINDEN')).toBe(false);
   });
 });

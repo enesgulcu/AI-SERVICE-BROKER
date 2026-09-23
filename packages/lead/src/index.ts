@@ -1,5 +1,7 @@
+export { InMemoryLeadIngestionAdapter } from './adapters/in-memory-lead-ingestion.adapter';
 export { IngestLead, IngestLeadInputError } from './application/ingest-lead';
 export type { IngestLeadCommand } from './application/ingest-lead';
+export { IdempotencyConflictError } from './application/lead-ingestion.port';
 export type {
   Clock,
   CreateLeadTransaction,

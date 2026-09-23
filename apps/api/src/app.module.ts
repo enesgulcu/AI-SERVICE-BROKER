@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LeadModule } from './lead/lead.module';
 import { ApiExceptionFilter } from './platform/http/api-exception.filter';
 import { createHttpLoggerOptions } from './platform/logging/http-logger.config';
 
@@ -12,6 +13,7 @@ import { createHttpLoggerOptions } from './platform/logging/http-logger.config';
     LoggerModule.forRoot({
       pinoHttp: createHttpLoggerOptions(loadApiEnvironment()),
     }),
+    LeadModule,
   ],
   controllers: [AppController],
   providers: [

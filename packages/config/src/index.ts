@@ -7,8 +7,16 @@ const baseEnvironmentSchema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
 
+const SYNTHETIC_LEAD_SOURCES = ['SYNTHETIC', 'TEST'] as const;
+
 const apiEnvironmentSchema = baseEnvironmentSchema.extend({
   API_PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
+  LEAD_PERSISTENCE: z.enum(['memory', 'postgres']).default('memory'),
+  PERSONAL_DATA_MODE: z.enum(['synthetic', 'approved']).default('synthetic'),
+  AUTO_FIRST_CONTACT: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
 });
 
 const workerEnvironmentSchema = baseEnvironmentSchema.extend({
@@ -42,4 +50,10 @@ export function loadDatabaseEnvironment(
   input: NodeJS.ProcessEnv = process.env,
 ): DatabaseEnvironment {
   return databaseEnvironmentSchema.parse(input);
+}
+
+export function isSyntheticLeadSource(source: string): boolean {
+  return SYNTHETIC_LEAD_SOURCES.includes(
+    source.trim().toUpperCase() as (typeof SYNTHETIC_LEAD_SOURCES)[number],
+  );
 }

@@ -23,6 +23,9 @@
   },
   "dependencies": {
     "@ai-service-broker/config": "workspace:*",
+    "@ai-service-broker/contracts": "workspace:*",
+    "@ai-service-broker/lead": "workspace:*",
+    "@ai-service-broker/postgres": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
     "@nestjs/platform-express": "catalog:",
@@ -31,7 +34,8 @@
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "reflect-metadata": "catalog:",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -74,6 +78,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@ai-service-broker/(.*)$": "<rootDir>/../../../packages/$1/src/index.ts"
+    }
   }
 }

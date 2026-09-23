@@ -1,0 +1,1 @@
+export const LEAD_INGESTION_PORT = Symbol('LEAD_INGESTION_PORT');

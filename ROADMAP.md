@@ -39,7 +39,7 @@ Exit: one command starts local dependencies/apps and CI proves the skeleton.
 - [ ] Source-specific contact eligibility and suppression decision
 - [x] PostgreSQL migrations, checksummed runner, and lead/outbox adapter
 - [ ] Container-backed PostgreSQL integration tests
-- [ ] Idempotent intake API
+- [x] Idempotent intake API (synthetic-only by default)
 - [ ] First-message draft through policy/legal/promise guards
 - [ ] Mandatory human approval and mock messaging adapter
 - [ ] State transition, transactional outbox and audit evidence

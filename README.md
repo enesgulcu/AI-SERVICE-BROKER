@@ -32,6 +32,15 @@ API health:
 Every HTTP response includes `x-correlation-id`; callers may supply a safe
 correlation ID for cross-service tracing.
 
+Synthetic lead intake:
+
+```bash
+curl -X POST http://localhost:3000/v1/leads \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: lead:demo-1" \
+  -d '{"source":"SYNTHETIC","sourceReference":"demo-1","phone":"+905551112233"}'
+```
+
 Start the background worker separately:
 
 ```bash

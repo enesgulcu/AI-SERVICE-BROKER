@@ -34,6 +34,13 @@ export type CreateLeadTransactionResult =
       duplicateReason: 'IDEMPOTENCY_KEY' | 'SOURCE_REFERENCE';
     };
 
+export class IdempotencyConflictError extends Error {
+  constructor() {
+    super('IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_REQUEST');
+    this.name = IdempotencyConflictError.name;
+  }
+}
+
 export interface LeadIngestionPort {
   createLeadWithOutbox(transaction: CreateLeadTransaction): Promise<CreateLeadTransactionResult>;
 }
