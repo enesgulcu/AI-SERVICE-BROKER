@@ -32,6 +32,7 @@ The repository will contain:
 - `packages/testing`: test builders and integration harness
 - `packages/<module>`: framework-independent domain/application code shared by
   API and worker; `packages/lead` is the first module
+- `packages/postgres`: SQL-first migrations, pool, and module-owned adapters
 
 API and worker share domain packages initially but deploy independently. No
 module may depend on an application entry point.

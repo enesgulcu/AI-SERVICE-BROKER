@@ -1,0 +1,50 @@
+{
+  "name": "@ai-service-broker/postgres",
+  "version": "0.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "migrations"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test:coverage": "jest --runInBand --coverage",
+    "migrate": "tsx src/cli/migrate.ts",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "@ai-service-broker/config": "workspace:*",
+    "@ai-service-broker/lead": "workspace:*",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.5",
+    "eslint": "^9.36.0",
+    "globals": "^16.4.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.4",
+    "tsx": "^4.20.5",
+    "typescript": "catalog:",
+    "typescript-eslint": "^8.44.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testEnvironment": "node"
+  }
+}

@@ -37,6 +37,7 @@ describe('IngestLead', () => {
   const eventId = '30ed6e26-dfaf-47f5-ac24-6db09622820a';
   const command = {
     idempotencyKey: 'lead:request-123',
+    requestFingerprint: 'a'.repeat(64),
     correlationId: 'request:trace-123',
     source: 'sahibinden',
     sourceReference: 'listing-123',
@@ -65,6 +66,7 @@ describe('IngestLead', () => {
     });
     expect(persistence.transaction).toMatchObject({
       idempotencyKey: command.idempotencyKey,
+      requestFingerprint: command.requestFingerprint,
       lead: {
         id: leadId,
         status: 'NEW',
@@ -115,6 +117,7 @@ describe('IngestLead', () => {
 
   it.each([
     ['INVALID_IDEMPOTENCY_KEY', { ...command, idempotencyKey: 'bad key' }],
+    ['INVALID_REQUEST_FINGERPRINT', { ...command, requestFingerprint: 'not-a-sha256' }],
     ['INVALID_CORRELATION_ID', { ...command, correlationId: 'bad id' }],
   ] as const)('rejects %s before persistence', async (code, invalidCommand) => {
     const persistence = new CapturingPersistence({

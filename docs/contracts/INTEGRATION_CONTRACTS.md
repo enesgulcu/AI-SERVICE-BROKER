@@ -17,6 +17,9 @@ Required request controls:
 - Unknown request fields are rejected.
 - Source reference is unique within a source.
 - Request/body limits apply before schema validation.
+- The API stores a SHA-256 `requestFingerprint` of the canonical request. Reusing
+  an `Idempotency-Key` with a different body is a conflict, not a silent
+  duplicate.
 
 The transport contract may contain `rawData`, but raw source payloads do not
 enter the Lead aggregate or domain events. The future ingestion adapter stores

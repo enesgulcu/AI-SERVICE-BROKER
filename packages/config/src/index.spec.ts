@@ -1,4 +1,4 @@
-import { loadApiEnvironment, loadWorkerEnvironment } from './index';
+import { loadApiEnvironment, loadDatabaseEnvironment, loadWorkerEnvironment } from './index';
 
 describe('environment configuration', () => {
   it('provides safe local defaults', () => {
@@ -19,5 +19,18 @@ describe('environment configuration', () => {
 
   it('loads a named worker', () => {
     expect(loadWorkerEnvironment({ WORKER_NAME: 'follow-up' }).WORKER_NAME).toBe('follow-up');
+  });
+
+  it('loads PostgreSQL configuration without exposing a default URL', () => {
+    expect(
+      loadDatabaseEnvironment({
+        DATABASE_URL: 'postgresql://app:secret@localhost:5432/ai_service_broker',
+      }),
+    ).toMatchObject({
+      DATABASE_SSL: 'disable',
+      DATABASE_URL: 'postgresql://app:secret@localhost:5432/ai_service_broker',
+    });
+    expect(() => loadDatabaseEnvironment({})).toThrow();
+    expect(() => loadDatabaseEnvironment({ DATABASE_URL: 'mysql://localhost/database' })).toThrow();
   });
 });

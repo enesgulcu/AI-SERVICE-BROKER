@@ -18,6 +18,7 @@ export interface LeadCreatedV1 {
 
 export interface CreateLeadTransaction {
   idempotencyKey: string;
+  requestFingerprint: string;
   lead: LeadSnapshot;
   event: LeadCreatedV1;
 }

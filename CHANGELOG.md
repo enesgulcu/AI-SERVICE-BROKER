@@ -32,3 +32,7 @@ Dates use ISO 8601. This project has not released a production version.
 - Framework-independent Lead aggregate with explicit invariants
 - Atomic lead persistence/outbox application port and `LeadCreated` V1 event
 - Contract rule keeping direct customer PII out of domain events
+- SQL-first PostgreSQL migrations with checksum and advisory-lock runner
+- Atomic lead + outbox adapter with idempotency fingerprint conflicts
+- Canonical request fingerprint helper
+- Local PostgreSQL/Redis Compose definition and `pnpm db:migrate`

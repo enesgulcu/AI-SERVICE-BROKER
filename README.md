@@ -12,13 +12,15 @@ data or send production messages. See `PROJECT_STATUS.md` and `ROADMAP.md`.
 
 - Node.js 22 or newer
 - pnpm 11.5.3 through Corepack
-- Docker Desktop (required from PostgreSQL/Redis integration work onward)
+- Docker Desktop (required to start local PostgreSQL/Redis via `docker compose`)
 
 ## Start
 
 ```bash
 pnpm install
 pnpm check
+docker compose up -d
+pnpm db:migrate
 pnpm --filter @ai-service-broker/api dev
 ```
 
@@ -49,6 +51,7 @@ pnpm --filter @ai-service-broker/worker dev
 - `docs/adr/`: durable architecture decisions
 - `packages/contracts`: versioned external/event schemas
 - `packages/lead`: framework-independent lead domain and application logic
+- `packages/postgres`: SQL migrations and lead/outbox persistence adapter
 
 Do not use real personal data until the legal/privacy and infrastructure gates
 listed in `OPEN_DECISIONS.md` are resolved.

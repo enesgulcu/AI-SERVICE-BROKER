@@ -24,7 +24,7 @@ source-of-truth hierarchy.
 - [x] pnpm workspace and shared TypeScript/tooling configuration
 - [x] API liveness and worker process skeletons
 - [x] Validated environment configuration
-- [ ] Local PostgreSQL/Redis environment
+- [x] Local PostgreSQL/Redis Compose definition (runtime not yet verified)
 - [x] Structured logging, correlation IDs and safe HTTP error contract
 - [x] Security headers and liveness/readiness endpoints
 - [x] CI quality and dependency-security checks
@@ -37,7 +37,8 @@ Exit: one command starts local dependencies/apps and CI proves the skeleton.
 - [x] Versioned lead ingestion and `LeadCreated` contracts
 - [ ] Source-adapter normalization and raw-payload provenance
 - [ ] Source-specific contact eligibility and suppression decision
-- [ ] PostgreSQL migrations and repository adapter
+- [x] PostgreSQL migrations, checksummed runner, and lead/outbox adapter
+- [ ] Container-backed PostgreSQL integration tests
 - [ ] Idempotent intake API
 - [ ] First-message draft through policy/legal/promise guards
 - [ ] Mandatory human approval and mock messaging adapter

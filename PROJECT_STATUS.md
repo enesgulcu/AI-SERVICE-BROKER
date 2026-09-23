@@ -1,13 +1,13 @@
 # Project Status
 
 Last updated: 2026-09-23  
-Current phase: Phase 1 — Executable foundation  
+Current phase: Phase 2 — First vertical slice: controlled lead contact  
 Overall status: In progress
 
 ## Current objective
 
-Establish the repository governance and executable foundation before introducing
-domain behavior or real personal data.
+Complete persistence for idempotent lead intake, then expose a controlled
+synthetic ingestion API. Real personal data remains blocked.
 
 ## Completed
 
@@ -36,19 +36,24 @@ domain behavior or real personal data.
 - Framework-independent Lead aggregate and ingestion use case added with
   validated invariants and an atomic persistence/outbox port.
 - `LeadCreated` V1 deliberately excludes direct customer PII.
+- SQL-first PostgreSQL package added: checksummed migrations, advisory lock,
+  inbox/outbox/lead schema, and atomic lead ingestion adapter.
+- Idempotency keys now bind a SHA-256 request fingerprint; reuse with a
+  different body is a conflict.
+- Compose file defines local PostgreSQL and Redis. Runtime is not yet verified
+  because Docker is not installed on this machine.
 
 ## In progress
 
-- PostgreSQL/Redis local development and integration-test environment
-- Database migration and inbox/outbox adapters
+- Container-backed PostgreSQL/Redis verification
+- Controlled lead ingestion HTTP API
 
 ## Next
 
-1. Add PostgreSQL/Redis infrastructure after a container runtime is available.
-2. Implement migration tooling and the PostgreSQL lead/inbox/outbox adapter.
+1. Verify Compose, migrations, and repository behavior after Docker is available.
+2. Expose the idempotent lead ingestion API with human-approval defaults.
 3. Add module-boundary architecture tests.
 4. Complete the conversation/risk evaluation catalogue.
-5. Expose the controlled lead ingestion API after persistence is verified.
 
 ## Current blockers
 
@@ -63,7 +68,8 @@ cross-border processing, and WhatsApp opt-in/template operation.
 
 Verified on 2026-09-23:
 
-- `pnpm check`: passed (format, lint, type-check, 25 unit tests, 5 API end-to-end
+- `pnpm check`: passed (format, lint, type-check, 37 unit tests, 5 API end-to-end
   tests and production builds)
 - `pnpm audit --prod --audit-level high`: passed with no known vulnerabilities
 - Node.js `v22.15.0`, pnpm `11.5.3`
+- Docker Compose and live PostgreSQL/Redis were not verified on this machine
