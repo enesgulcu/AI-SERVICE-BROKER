@@ -1,0 +1,27 @@
+import { z } from 'zod';
+
+const environmentSchema = z.enum(['local', 'development', 'staging', 'production', 'test']);
+
+const baseEnvironmentSchema = z.object({
+  NODE_ENV: environmentSchema.default('local'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+});
+
+const apiEnvironmentSchema = baseEnvironmentSchema.extend({
+  API_PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
+});
+
+const workerEnvironmentSchema = baseEnvironmentSchema.extend({
+  WORKER_NAME: z.string().trim().min(1).default('default'),
+});
+
+export type ApiEnvironment = z.infer<typeof apiEnvironmentSchema>;
+export type WorkerEnvironment = z.infer<typeof workerEnvironmentSchema>;
+
+export function loadApiEnvironment(input: NodeJS.ProcessEnv = process.env): ApiEnvironment {
+  return apiEnvironmentSchema.parse(input);
+}
+
+export function loadWorkerEnvironment(input: NodeJS.ProcessEnv = process.env): WorkerEnvironment {
+  return workerEnvironmentSchema.parse(input);
+}

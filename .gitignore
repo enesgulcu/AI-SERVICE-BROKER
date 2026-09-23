@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# builds and test output
+dist/
+coverage/
+.next/
+*.tsbuildinfo
+
+# environment and secrets
+.env
+.env.*
+!.env.example
+
+# logs and runtime data
+*.log
+logs/
+tmp/
+
+# editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# local tooling
+.turbo/
+.pnpm-debug.log

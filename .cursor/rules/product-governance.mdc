@@ -1,0 +1,21 @@
+---
+description: AI Service Broker ürün ve geliştirme yönetişimi
+alwaysApply: true
+---
+
+# Değişmez çalışma düzeni
+
+- `SETUP_DOCUMENT.md` ürün vizyonunun başlangıç kaynağıdır; yaşayan sözleşme `MASTER_SPEC.md` dosyasıdır.
+- İşe başlamadan önce `PROJECT_STATUS.md`, `OPEN_DECISIONS.md` ve ilgili domain belgelerini oku.
+- Belirsiz ticari veya hukuki kararı varsayma; `OPEN_DECISIONS.md` içine kaydet. Güvenli teknik varsayımlar ADR ile belgelenebilir.
+- Finansal sınırlar, yaptırım kararları, şirket gerçekleri ve hukuki taahhütler LLM/prompt içinde uygulanmaz.
+- Domain kuralları saf ve deterministik domain servislerinde; entegrasyonlar port/adapter arkasında olmalıdır.
+- Modüller birbirlerinin veritabanı tablolarına veya iç sınıflarına doğrudan erişmez; public application contract/event kullanır.
+- Her önemli requirement, quote, policy ve job değişikliği versiyonlanır; kritik işlem audit event üretir.
+- Dış yan etkiler idempotent olmalı; mesaj işleme conversation lock kullanmalıdır.
+- Kod değişikliği test, lint, type-check ve ilgili dokümantasyon güncellemesi olmadan tamamlanmış sayılmaz.
+- Her çalışma diliminin sonunda `PROJECT_STATUS.md` ve `CHANGELOG.md` güncellenir.
+- Yeni mimari kararlar `docs/adr/` altında ADR olarak kaydedilir; eski kararlar silinmez, superseded yapılır.
+- Kapsam dışı iyileştirmeleri sessizce uygulama; roadmap/backlog içine kaydet.
+- Kişisel veri loglama; secret commit etme; müşteri veya personel verisini model sağlayıcısına açık sözleşme olmadan gönderme.
+- Kritik risk, düşük confidence, hukuki ihtilaf ve policy dışı fiyat işlemi insan incelemesine yönlendirilir.
