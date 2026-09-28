@@ -17,6 +17,7 @@ const apiEnvironmentSchema = baseEnvironmentSchema.extend({
     .enum(['true', 'false'])
     .default('false')
     .transform((value) => value === 'true'),
+  AUTOMATION_MODE: z.enum(['supervised', 'autonomous']).default('supervised'),
   AUTO_FIRST_CONTACT: z
     .enum(['true', 'false'])
     .default('false')

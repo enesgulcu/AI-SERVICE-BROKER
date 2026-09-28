@@ -10,6 +10,7 @@ describe('environment configuration', () => {
     expect(loadApiEnvironment({})).toEqual({
       API_PORT: 3000,
       AUTO_FIRST_CONTACT: false,
+      AUTOMATION_MODE: 'supervised',
       AUTOMATION_PAUSED: false,
       LEAD_PERSISTENCE: 'memory',
       LOG_LEVEL: 'info',

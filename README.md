@@ -47,8 +47,12 @@ curl -X POST http://localhost:3000/v1/leads \
   -d '{"source":"SYNTHETIC","sourceReference":"demo-1","phone":"+905551112233"}'
 ```
 
-Sandbox first contact still requires a human decision. Nothing is sent before
-approval, and the only delivery channel is a mock adapter:
+Sandbox first contact uses the guarded mock draft. With the default
+`AUTOMATION_MODE=supervised`, a person records the approval. Set
+`AUTOMATION_MODE=autonomous` and `AUTO_FIRST_CONTACT=true` to let
+`POST /v1/automation/runs` approve that same draft. `AUTOMATION_PAUSED=true`
+or conversation control `HUMAN_CONTROL` stops the next run. Nothing is sent
+on a live channel:
 
 ```bash
 curl -X POST http://localhost:3000/v1/leads/<leadId>/contact-reviews \

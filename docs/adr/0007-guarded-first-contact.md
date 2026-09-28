@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-09-23
+- Superseded in part by ADR-0017: only the sentence that `AUTO_FIRST_CONTACT` cannot skip this path, and only for a synthetic mock draft when automation is autonomous and not paused
 
 ## Context
 

@@ -31,3 +31,4 @@ module boundaries, data, security, reliability, deployment or major technology.
 - ADR-0014 approved template catalogue and mock delivery callbacks
 - ADR-0015 operator read views omit sensitive values
 - ADR-0016 synthetic sandbox completion
+- ADR-0017 controllable synthetic automation

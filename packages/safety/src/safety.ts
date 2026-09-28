@@ -74,6 +74,32 @@ export function planFollowUp(): { ok: false; code: 'FOLLOW_UP_NOT_APPROVED' } {
   return { ok: false, code: 'FOLLOW_UP_NOT_APPROVED' };
 }
 
+export const AUTOMATION_ACTOR = 'automation';
+
+export function assessAutomation(input: {
+  mode: 'supervised' | 'autonomous';
+  paused: boolean;
+  controlMode: 'AI_ACTIVE' | 'HUMAN_CONTROL' | 'PAUSED';
+  synthetic: boolean;
+  channel: string;
+}):
+  | { ok: true; actorId: typeof AUTOMATION_ACTOR; channel: 'MOCK' }
+  | {
+      ok: false;
+      code: 'AUTOMATION_STOPPED' | 'REAL_DATA_INGESTION_BLOCKED' | 'UNSAFE_CHANNEL';
+    } {
+  if (input.mode !== 'autonomous' || input.paused || input.controlMode !== 'AI_ACTIVE') {
+    return { ok: false, code: 'AUTOMATION_STOPPED' };
+  }
+  if (!input.synthetic) {
+    return { ok: false, code: 'REAL_DATA_INGESTION_BLOCKED' };
+  }
+  if (input.channel !== 'MOCK') {
+    return { ok: false, code: 'UNSAFE_CHANNEL' };
+  }
+  return { ok: true, actorId: AUTOMATION_ACTOR, channel: 'MOCK' };
+}
+
 const PROMISE_LANGUAGE = /garanti|iade|tazminat|ücret|fiyat|maaş|işe al|₺|\btl\b|\btry\b/i;
 const LEGAL_COMMITMENT =
   /sorumluluğu kabul|kusur biz|iş sözleşmesi|işvereniyiz|kadromuza|bağlayıcı sözleşme/i;

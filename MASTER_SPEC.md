@@ -125,15 +125,18 @@ Built for synthetic data:
   a network call
 - Operator reads, optional token roles, and an approval gate for non-synthetic
   sources
+- A stoppable automation run for the synthetic mock path. The default mode is
+  supervised
 
 Still switched off by default:
 
 - Live WhatsApp, a company tariff, company facts, and a legal contract
 - Real personal data (`PERSONAL_DATA_MODE=synthetic`) and admin identity
 - Token authentication (`OPERATOR_AUTH=disabled`)
+- Autonomous runs (`AUTOMATION_MODE=supervised`)
 
-Roadmap checklist: 59 of 59. `pnpm check` passed on 2026-09-24 with 114 unit
-tests, including the Postgres integration test, and 23 API end-to-end tests.
-Hosted Postgres has migrations `0001` through `0008`. Docker Compose and Redis
+Roadmap checklist: 59 of 59. `pnpm check` passed on 2026-09-28 with 115 unit
+tests, including the Postgres integration test, and 25 API end-to-end tests.
+Hosted Postgres has migrations `0001` through `0009`. Docker Compose and Redis
 on this machine are still unverified. Detail is in `PROJECT_STATUS.md` and
 `ROADMAP.md`.

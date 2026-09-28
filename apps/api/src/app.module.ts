@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AutomationModule } from './automation/automation.module';
 import { ContactModule } from './contact/contact.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { InboxModule } from './inbox/inbox.module';
@@ -20,6 +21,7 @@ import { createHttpLoggerOptions } from './platform/logging/http-logger.config';
     }),
     LeadModule,
     ContactModule,
+    AutomationModule,
     InboxModule,
     ConversationModule,
     WorkflowModule,

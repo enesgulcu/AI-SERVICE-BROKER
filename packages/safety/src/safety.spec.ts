@@ -1,4 +1,5 @@
 import {
+  assessAutomation,
   assessPersonalDataPilot,
   authorizeOperator,
   buildJobSnapshot,
@@ -161,5 +162,62 @@ describe('closed commercial and safety gates', () => {
         role: 'operator',
       }),
     ).toMatchObject({ ok: true, role: 'local' });
+  });
+
+  it('allows automation only when it is autonomous, unpaused, synthetic, and mock', () => {
+    expect(
+      assessAutomation({
+        mode: 'autonomous',
+        paused: false,
+        controlMode: 'AI_ACTIVE',
+        synthetic: true,
+        channel: 'MOCK',
+      }),
+    ).toEqual({ ok: true, actorId: 'automation', channel: 'MOCK' });
+    expect(
+      assessAutomation({
+        mode: 'supervised',
+        paused: false,
+        controlMode: 'AI_ACTIVE',
+        synthetic: true,
+        channel: 'MOCK',
+      }),
+    ).toEqual({ ok: false, code: 'AUTOMATION_STOPPED' });
+    expect(
+      assessAutomation({
+        mode: 'autonomous',
+        paused: true,
+        controlMode: 'AI_ACTIVE',
+        synthetic: true,
+        channel: 'MOCK',
+      }),
+    ).toEqual({ ok: false, code: 'AUTOMATION_STOPPED' });
+    expect(
+      assessAutomation({
+        mode: 'autonomous',
+        paused: false,
+        controlMode: 'HUMAN_CONTROL',
+        synthetic: true,
+        channel: 'MOCK',
+      }),
+    ).toEqual({ ok: false, code: 'AUTOMATION_STOPPED' });
+    expect(
+      assessAutomation({
+        mode: 'autonomous',
+        paused: false,
+        controlMode: 'AI_ACTIVE',
+        synthetic: false,
+        channel: 'MOCK',
+      }),
+    ).toEqual({ ok: false, code: 'REAL_DATA_INGESTION_BLOCKED' });
+    expect(
+      assessAutomation({
+        mode: 'autonomous',
+        paused: false,
+        controlMode: 'AI_ACTIVE',
+        synthetic: true,
+        channel: 'WHATSAPP',
+      }),
+    ).toEqual({ ok: false, code: 'UNSAFE_CHANNEL' });
   });
 });

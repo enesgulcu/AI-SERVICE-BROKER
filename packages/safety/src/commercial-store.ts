@@ -1,4 +1,5 @@
-export type CommercialKind = 'QUOTE' | 'NEGOTIATION' | 'FOLLOW_UP' | 'JOB' | 'PROVIDER_DELIVERY';
+export type CommercialKind =
+  'QUOTE' | 'NEGOTIATION' | 'FOLLOW_UP' | 'JOB' | 'PROVIDER_DELIVERY' | 'AUTOMATION';
 
 export type CommercialValue = string | number | boolean;
 

@@ -61,6 +61,32 @@ suite('container-backed commercial records', () => {
       expect(listed).toHaveLength(1);
       expect(listed[0]?.payload.totalMinor).toBe(4);
       expect(JSON.stringify(listed)).not.toContain('+905550019001');
+      const runId = randomUUID();
+      await expect(
+        store.save({
+          id: runId,
+          leadId,
+          kind: 'AUTOMATION',
+          idempotencyKey: `run:${leadId}`,
+          fingerprint,
+          payload: {
+            disposition: 'WAITING',
+            leadId,
+            status: 'CONTACTED',
+            version: 3,
+            actorId: 'automation',
+            reason: 'CUSTOMER_INTEREST',
+            stopped: true,
+            created: false,
+          },
+        }),
+      ).resolves.toBe('CREATED');
+      const stored = await store.findByKey('AUTOMATION', `run:${leadId}`);
+      expect(stored?.payload).toMatchObject({
+        version: 3,
+        stopped: true,
+        reason: 'CUSTOMER_INTEREST',
+      });
     } finally {
       const client = await pool.connect();
       try {

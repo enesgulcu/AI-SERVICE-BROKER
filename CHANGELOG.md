@@ -5,6 +5,17 @@ Dates use ISO 8601. This project has not released a production version.
 
 ## [Unreleased]
 
+### Added — 2026-09-28
+
+- Controllable synthetic automation. `AUTOMATION_MODE=autonomous` with
+  `AUTO_FIRST_CONTACT=true` can approve the sandbox mock draft, issue the
+  fixture quote, and plan an unsent follow-up. The default stays `supervised`.
+  Pause and human control return `AUTOMATION_STOPPED`. A half-finished quote
+  waits instead of being treated as manual review. API end-to-end tests keep
+  an in-memory store even when the shell points at Postgres. Customer interest,
+  requirements, and acceptance are not invented. See ADR-0017 and migration
+  `0009_automation_runs.sql`.
+
 ### Added — 2026-09-24
 
 - Publication check. `pnpm check` now includes a tracked-file secret scan.

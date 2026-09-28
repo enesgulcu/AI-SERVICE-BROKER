@@ -34,5 +34,6 @@ import { FirstContactService } from './first-contact.service';
     },
     FirstContactService,
   ],
+  exports: [FirstContactService],
 })
 export class ContactModule {}

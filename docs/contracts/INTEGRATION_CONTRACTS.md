@@ -38,7 +38,10 @@ Response dispositions:
   `PERSONAL_DATA_MODE=synthetic`.
 - `409 IDEMPOTENCY_KEY_REUSED`: the same key was used with a different body.
 
-`AUTO_FIRST_CONTACT` cannot skip human approval. Ingestion never sends a
+`AUTO_FIRST_CONTACT` cannot skip human approval while `AUTOMATION_MODE` is
+`supervised`. ADR-0017 allows the `automation` actor to approve the same
+sandbox draft only when the mode is `autonomous`, first contact is enabled,
+automation is not paused, and the channel stays mock. Ingestion never sends a
 customer message. Raw source JSON is stored only in `acquisition.raw_payloads`
 and is referenced from the lead; it is not copied into events.
 
@@ -54,8 +57,9 @@ audit. It is not authentication; production admin identity remains OD-009.
 - `201 PENDING`: a sandbox draft and 24-hour review were created. Nothing was
   sent.
 - `200 DUPLICATE`: the same preparation or an open review is returned.
-- `200 APPROVED` / `MOCK_ACCEPTED`: a human approved before expiry and the mock
-  channel accepted delivery.
+- `200 APPROVED` / `MOCK_ACCEPTED`: approval arrived before expiry and the mock
+  channel accepted delivery. In supervised mode the approver is a human. In
+  autonomous mode the approver may be the `automation` actor.
 - `200 REJECTED` / `NOT_SENT`: a human rejected the draft.
 - `403 CONTACT_NOT_ELIGIBLE`: the source is not `SYNTHETIC` or `TEST`.
 - `409 REVIEW_EXPIRED`: the decision arrived after expiry, so nothing was sent.
@@ -64,6 +68,27 @@ audit. It is not authentication; production admin identity remains OD-009.
 
 `ContactReviewOpened` and `LeadContacted` events carry identifiers, template
 version and channel. They do not carry the draft, phone, name, or raw payload.
+
+## Automation run V1
+
+`GET /v1/automation/policy` returns the mode, pause, and auto-first-contact
+flags. It does not return secrets.
+
+`POST /v1/automation/runs` body is `{ "leadId" }` plus `Idempotency-Key`.
+One call performs one allowed synthetic step. The same key returns the stored
+result. A different lead with that key is `409 IDEMPOTENCY_KEY_REUSED`.
+
+- `201 ADVANCED`: mock first contact was approved, or the sandbox quote was
+  issued.
+- `200 WAITING`: the next fact must come from a person. Reasons are
+  `CUSTOMER_INTEREST`, `REQUIREMENTS`, `FOLLOW_UP_PLANNED`, `ACCEPTANCE`, or
+  `MANUAL_REVIEW`. A planned follow-up is not sent.
+- `200 COMPLETE`: the lead is already `JOB_READY`.
+- `409 AUTOMATION_STOPPED`: the mode is supervised, automation is paused, a
+  conversation is not `AI_ACTIVE`, or automatic first contact is off.
+- `403 REAL_DATA_INGESTION_BLOCKED`: the lead is not synthetic.
+
+The default mode is `supervised`.
 
 ## Inbound message V1
 

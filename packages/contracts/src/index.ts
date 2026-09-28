@@ -1,4 +1,14 @@
 export {
+  automationPolicyResponseV1Schema,
+  automationRunRequestV1Schema,
+  automationRunResponseV1Schema,
+} from './v1/automation.contract';
+export type {
+  AutomationPolicyResponseV1,
+  AutomationRunRequestV1,
+  AutomationRunResponseV1,
+} from './v1/automation.contract';
+export {
   idempotencyKeySchema,
   ingestLeadRequestV1Schema,
   ingestLeadResponseV1Schema,

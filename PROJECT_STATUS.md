@@ -1,6 +1,6 @@
 # Project Status
 
-Last updated: 2026-09-24  
+Last updated: 2026-09-28  
 Current phase: Synthetic sandbox path complete  
 Overall status: Checklist complete — 59 of 59 roadmap items
 
@@ -8,13 +8,15 @@ Overall status: Checklist complete — 59 of 59 roadmap items
 
 A synthetic lead can move from intake to an operational `JOB_READY` snapshot.
 The snapshot is not a contract. The sandbox quote is a one-minor-unit fixture,
-not a company tariff. Live WhatsApp is not called.
+not a company tariff. Live WhatsApp is not called. `AUTOMATION_MODE=autonomous`
+can run the allowed mock steps. The default remains `supervised`, and pause or
+human control stops the next run.
 
 | Area       | Now                                                                                                                                                |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Phases 0–8 | Checklist complete. Production switches for a real tariff, live WhatsApp, a legal contract, an identity provider, and real personal data stay off. |
 
-Checklist: 59 of 59. Verification on 2026-09-24: `pnpm check` (114 unit tests, including the Postgres integration test, and 23 API end-to-end tests) plus `pnpm audit --prod --audit-level high`. Migrations `0001`–`0008` are on hosted Postgres. CI runs the integration test against a Postgres 16 service container.
+Checklist: 59 of 59. Verification on 2026-09-28: `pnpm check` passed (115 unit tests, including the Postgres integration test, and 25 API end-to-end tests). End-to-end tests stay on the in-memory store even when the shell points at Postgres. Migrations `0001`–`0009` are on hosted Postgres. CI runs the integration test against a Postgres 16 service container.
 
 ## Current objective
 
@@ -59,8 +61,9 @@ commitment.
   conflicts, and real-source blocking.
 - Raw payloads are stored separately from the lead and are excluded from events.
 - Synthetic first contact moves `NEW → CONTACT_PENDING → CONTACTED` only after
-  a guarded sandbox draft and human approval. Delivery is mock-only. Rejection
-  and expiry do not send.
+  a guarded sandbox draft and an approval. In supervised mode the approver is a
+  person. In autonomous mode the approver may be the `automation` actor on the
+  mock channel. Rejection and expiry do not send.
 - Short correlation IDs are replaced before they reach lead ingestion.
 - Migration files execute as one simple-query script inside their transaction.
 - The API closes its PostgreSQL pool on shutdown and handles idle client errors.
@@ -113,6 +116,10 @@ commitment.
   Safe dead letters can be redriven and audited. Published events hand off to
   the mock provider.
 - Operator lead and review-queue reads mask the phone and omit listing text.
+- `POST /v1/automation/runs` performs one synthetic mock step when
+  `AUTOMATION_MODE=autonomous`. It waits for customer interest, a confirmed
+  requirement, and human acceptance. Pause and human control stop it. See
+  ADR-0017. Migration `0009_automation_runs.sql` stores the run.
 
 ## In progress
 
@@ -136,16 +143,16 @@ WhatsApp opt-in/template operation.
 
 ## Verification
 
-Verified on 2026-09-24:
+Verified on 2026-09-28:
 
-- `pnpm check`: passed (format, lint, type-check, 114 unit tests including
-  the Postgres integration test, 23 API end-to-end tests, production builds,
-  and the tracked-file secret scan)
+- `pnpm check` passed: format, lint, type-check, 115 unit tests including the
+  Postgres integration test, 25 API end-to-end tests, production builds, and
+  the tracked-file secret scan. The end-to-end suite forces an in-memory store.
 - Postgres commercial integration test: passed against hosted Postgres on
-  2026-09-23
+  2026-09-28
 - Node.js on this machine is v24.14.0. Project engines require Node.js 22 or
   newer. pnpm `11.5.3`
-- Migrations `0001` through `0008` are applied on hosted Postgres
+- Migrations `0001` through `0009` are applied on hosted Postgres
 - Docker Compose and live Redis were not verified on this machine
 - Production go-live gates in `QUALITY_GATES.md` and
   `docs/legal/COMPLIANCE_CHECKLIST.md` remain unchecked

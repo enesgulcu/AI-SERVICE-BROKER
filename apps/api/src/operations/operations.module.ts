@@ -36,5 +36,6 @@ import { OperationsService } from './operations.service';
       inject: [LeadPersistence, AdvanceWorkflow],
     },
   ],
+  exports: [OperationsService],
 })
 export class OperationsModule {}
